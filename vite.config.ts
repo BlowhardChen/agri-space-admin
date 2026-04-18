@@ -1,45 +1,99 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import { defineConfig, loadEnv, ConfigEnv } from "vite";
+import react from "@vitejs/plugin-react";
+import { resolve } from "path";
+import { wrapperEnv } from "./src/utils/getEnv";
+import { createHtmlPlugin } from "vite-plugin-html";
+import viteCompression from "vite-plugin-compression";
+import eslintPlugin from "vite-plugin-eslint";
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src')
-    }
-  },
-  server: {
-    port: 3000,
-    open: true,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
-  },
-  build: {
-    outDir: 'dist',
-    sourcemap: false,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    },
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          react: ['react', 'react-dom'],
-          antd: ['antd'],
-          router: ['react-router-dom'],
-          redux: ['redux', 'react-redux', '@reduxjs/toolkit']
-        }
-      }
-    }
-  }
-})
+// @see: https://vitejs.dev/config/
+export default defineConfig(({ mode }: ConfigEnv) => {
+	const env = loadEnv(mode, process.cwd());
+	const viteEnv = wrapperEnv(env);
+
+	return {
+		// base: "/",
+		// alias config
+		resolve: {
+			alias: {
+				"@": resolve(__dirname, "./src")
+			}
+		},
+		// global css
+		css: {
+			preprocessorOptions: {
+				less: {
+					// modifyVars: {
+					// 	"primary-color": "#1DA57A",
+					// },
+					javascriptEnabled: true,
+					additionalData: `@import "@/styles/var.less";`
+				}
+			}
+		},
+		// server config
+		server: {
+			host: "0.0.0.0", // 服务器主机名，如果允许外部访问，可设置为"0.0.0.0"
+			port: viteEnv.VITE_PORT,
+			open: viteEnv.VITE_OPEN,
+			cors: true,
+			// https: false,
+			// 代理跨域（mock 不需要配置，这里只是个事列）
+			proxy: {
+				"/api": {
+					target: "https://mock.mengxuegu.com/mock/62abda3212c1416424630a45", // easymock
+					changeOrigin: true,
+					rewrite: (path: string) => path.replace(/^\/api/, "")
+				}
+			}
+		},
+		// plugins
+		plugins: [
+			react(),
+			createHtmlPlugin({
+				inject: {
+					data: {
+						title: viteEnv.VITE_GLOB_APP_TITLE
+					}
+				}
+			}),
+			// * 使用 svg 图标
+			createSvgIconsPlugin({
+				iconDirs: [resolve(process.cwd(), "src/assets/icons")],
+				symbolId: "icon-[dir]-[name]"
+			}),
+			// * EsLint 报错信息显示在浏览器界面上
+			eslintPlugin(),
+			// * gzip compress
+			viteEnv.VITE_BUILD_GZIP &&
+				viteCompression({
+					verbose: true,
+					disable: false,
+					threshold: 10240,
+					algorithm: "gzip",
+					ext: ".gz"
+				})
+		],
+		// build configure
+		build: {
+			outDir: "dist",
+			// 使用 oxc 作为默认构建工具
+			minify: "oxc" as const,
+			// terserOptions: {
+			// 	compress: {
+				// 		drop_console: viteEnv.VITE_DROP_CONSOLE,
+				// 		drop_debugger: true
+				// 	}
+			// },
+			rollupOptions: {
+				output: {
+					// Static resource classification and packaging
+					chunkFileNames: "assets/js/[name]-[hash].js",
+					entryFileNames: "assets/js/[name]-[hash].js",
+					assetFileNames: "assets/[ext]/[name]-[hash].[ext]"
+				}
+			}
+		}
+	};
+});

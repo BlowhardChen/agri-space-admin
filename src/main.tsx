@@ -1,15 +1,24 @@
-import {StrictMode} from "react";
-import {createRoot} from "react-dom/client";
-import {RouterProvider} from "react-router-dom";
-import {Provider} from "react-redux";
-import "./styles/index.css";
-import router from "./routers";
-import store from "./redux";
+import ReactDOM from "react-dom/client";
+import "@/styles/reset.less";
+import "@/assets/iconfont/iconfont.less";
+import "@/assets/fonts/font.less";
+// import "antd/dist/antd.less";
+import "@/styles/common.less";
+import "@/language/index";
+import "virtual:svg-icons-register";
+import { PersistGate } from "redux-persist/integration/react";
+import { Provider } from "react-redux";
+import { store, persistor } from "@/redux";
+import App from "@/App";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  </StrictMode>,
+// react 18 创建
+ReactDOM.createRoot(document.getElementById("root")!).render(
+	// * react严格模式
+	// <React.StrictMode>
+	<Provider store={store}>
+		<PersistGate persistor={persistor}>
+			<App />
+		</PersistGate>
+	</Provider>
+	// </React.StrictMode>
 );

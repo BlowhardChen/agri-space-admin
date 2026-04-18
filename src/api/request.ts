@@ -14,7 +14,7 @@ service.interceptors.request.use(
   (config) => {
     // 从localStorage中获取token
     const token = localStorage.getItem("token");
-    if (token) {
+    if (token && config.headers) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
@@ -56,7 +56,6 @@ export const request = {
   delete: <T = unknown>(url: string, params?: Record<string, unknown>) => {
     return service.delete<T, T>(url, { params })
   }
-}
 };
 
 export default service;
