@@ -9,18 +9,18 @@ const globalState: GlobalState = {
 	assemblySize: "middle",
 	language: "",
 	themeConfig: {
-		// 默认 primary 主题颜色
-		primary: "#1890ff",
-		// 深色模式
+		// 榛樿 primary 涓婚棰滆壊
+		primary: "#379446",
+		// 娣辫壊妯″紡
 		isDark: false,
-		// 色弱模式(weak) || 灰色模式(gray)
+		// 鑹插急妯″紡(weak) || 鐏拌壊妯″紡(gray)
 		weakOrGray: "",
 		layout: "vertical",
-		// 面包屑导航
+		// 闈㈠寘灞戝鑸?
 		breadcrumb: true,
-		// 标签页
+		// 鏍囩椤?
 		tabs: true,
-		// 页脚
+		// 椤佃剼
 		footer: true
 	}
 };

@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getBrowserLang } from "@/utils/util";
 import { ConfigProvider } from "antd";
 import { connect } from "react-redux";
-import { setLanguage } from "@/redux/modules/global/action";
+import { setLanguage, setThemeConfig } from "@/redux/modules/global/action";
 import { HashRouter } from "react-router-dom";
 import AuthRouter from "@/routers/utils/authRouter";
 import Router from "@/routers/index";
@@ -12,24 +12,37 @@ import enUS from "antd/lib/locale/en_US";
 import i18n from "i18next";
 import "moment/dist/locale/zh-cn";
 
+const DEFAULT_PRIMARY_COLOR = "#379446";
+
 const App = (props: any) => {
-	const { language, assemblySize, themeConfig, setLanguage } = props;
+	const { language, assemblySize, themeConfig, setLanguage, setThemeConfig } = props;
 	const [i18nLocale, setI18nLocale] = useState(zhCN);
 
-	// 全局使用主题
 	useTheme(themeConfig);
 
-	// 设置 antd 语言国际化
 	const setAntdLanguage = () => {
-		// 如果 redux 中有默认语言就设置成 redux 的默认语言，没有默认语言就设置成浏览器默认语言
-		if (language && language == "zh") return setI18nLocale(zhCN);
-		if (language && language == "en") return setI18nLocale(enUS);
-		if (getBrowserLang() == "zh") return setI18nLocale(zhCN);
-		if (getBrowserLang() == "en") return setI18nLocale(enUS);
+		if (language === "zh") return setI18nLocale(zhCN);
+		if (language === "en") return setI18nLocale(enUS);
+		if (getBrowserLang() === "zh") return setI18nLocale(zhCN);
+		if (getBrowserLang() === "en") return setI18nLocale(enUS);
 	};
 
 	useEffect(() => {
-		// 全局使用国际化
+		if (!themeConfig.primary || themeConfig.primary === "#1890ff") {
+			setThemeConfig({ ...themeConfig, primary: DEFAULT_PRIMARY_COLOR });
+		}
+	}, []);
+
+	useEffect(() => {
+		ConfigProvider.config({
+			theme: {
+				primaryColor: themeConfig.primary || DEFAULT_PRIMARY_COLOR,
+				infoColor: themeConfig.primary || DEFAULT_PRIMARY_COLOR
+			}
+		});
+	}, [themeConfig.primary]);
+
+	useEffect(() => {
 		i18n.changeLanguage(language || getBrowserLang());
 		setLanguage(language || getBrowserLang());
 		setAntdLanguage();
@@ -47,5 +60,5 @@ const App = (props: any) => {
 };
 
 const mapStateToProps = (state: any) => state.global;
-const mapDispatchToProps = { setLanguage };
+const mapDispatchToProps = { setLanguage, setThemeConfig };
 export default connect(mapStateToProps, mapDispatchToProps)(App);

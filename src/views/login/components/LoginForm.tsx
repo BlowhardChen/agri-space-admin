@@ -43,16 +43,16 @@ const LoginForm = (props: LoginFormProps) => {
 		<Form
 			form={form}
 			className="login-form"
-			name="basic"
+			name="login"
 			initialValues={{ remember: true }}
 			onFinish={onFinish}
-			onFinishFailed={errorInfo => console.log("Failed:", errorInfo)}
 			size="large"
 			autoComplete="off"
 		>
 			<div className="login-field-label">用户名</div>
 			<Form.Item name="username" rules={[{ required: true, message: "请输入用户名" }]}>
 				<Input
+					autoComplete="username"
 					placeholder="请输入用户名"
 					prefix={<UserOutlined />}
 					onFocus={() => onFieldFocusChange?.("username")}
@@ -63,7 +63,7 @@ const LoginForm = (props: LoginFormProps) => {
 			<div className="login-field-label">密码</div>
 			<Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
 				<Input.Password
-					autoComplete="new-password"
+					autoComplete="current-password"
 					placeholder="请输入密码"
 					prefix={<LockOutlined />}
 					visibilityToggle={{
@@ -73,7 +73,7 @@ const LoginForm = (props: LoginFormProps) => {
 							onPasswordVisibilityChange?.(visible);
 						}
 					}}
-					iconRender={visible => (visible ? <EyeTwoTone twoToneColor="#4a4a4a" /> : <EyeInvisibleOutlined />)}
+					iconRender={visible => (visible ? <EyeTwoTone twoToneColor="#379446" /> : <EyeInvisibleOutlined />)}
 					onFocus={() => onFieldFocusChange?.("password")}
 					onBlur={() => onFieldFocusChange?.(null)}
 					onChange={event => onPasswordFilledChange?.(event.target.value.length > 0)}
@@ -85,7 +85,7 @@ const LoginForm = (props: LoginFormProps) => {
 					<Checkbox>30 天内记住我</Checkbox>
 				</label>
 				<button className="form-link form-link-button" type="button">
-					忘记密码？
+					忘记密码?
 				</button>
 			</div>
 

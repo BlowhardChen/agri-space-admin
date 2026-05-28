@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
+import { BarChartOutlined, CloudOutlined, ExperimentOutlined, LineChartOutlined } from "@ant-design/icons";
 
-interface AnimatedLoginIllustrationProps {
+interface LoginShowcaseProps {
 	activeField?: "username" | "password" | null;
 	passwordVisible?: boolean;
 	hasPassword?: boolean;
@@ -15,6 +16,21 @@ interface EyeProps {
 	forceLookY?: number;
 	cursor: { x: number; y: number };
 }
+
+interface PupilProps {
+	size?: number;
+	maxDistance?: number;
+	forceLookX?: number;
+	forceLookY?: number;
+	cursor: { x: number; y: number };
+}
+
+const statusCards = [
+	{ icon: <LineChartOutlined />, label: "作物长势", value: "良好" },
+	{ icon: <ExperimentOutlined />, label: "土壤湿度", value: "适宜" },
+	{ icon: <CloudOutlined />, label: "灌溉状态", value: "正常" },
+	{ icon: <BarChartOutlined />, label: "产量预测", value: "↑ 12.5%" }
+];
 
 const useCursorPosition = () => {
 	const [cursor, setCursor] = useState({ x: 0, y: 0 });
@@ -104,14 +120,6 @@ const EyeBall = ({ size = 18, pupilSize = 7, maxDistance = 5, isBlinking = false
 	);
 };
 
-interface PupilProps {
-	size?: number;
-	maxDistance?: number;
-	forceLookX?: number;
-	forceLookY?: number;
-	cursor: { x: number; y: number };
-}
-
 const Pupil = ({ size = 12, maxDistance = 5, forceLookX, forceLookY, cursor }: PupilProps) => {
 	const pupilRef = useRef<HTMLDivElement>(null);
 
@@ -152,11 +160,7 @@ const Pupil = ({ size = 12, maxDistance = 5, forceLookX, forceLookY, cursor }: P
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
-const AnimatedLoginIllustration = ({
-	activeField = null,
-	passwordVisible = false,
-	hasPassword = false
-}: AnimatedLoginIllustrationProps) => {
+const LoginShowcase = ({ activeField = null, passwordVisible = false, hasPassword = false }: LoginShowcaseProps) => {
 	const cursor = useCursorPosition();
 	const purpleRef = useRef<HTMLDivElement>(null);
 	const blackRef = useRef<HTMLDivElement>(null);
@@ -209,7 +213,7 @@ const AnimatedLoginIllustration = ({
 		};
 	}, [hasPassword, passwordVisible]);
 
-	const getFaceState = (ref: React.RefObject<HTMLDivElement | null>) => {
+	const getFaceState = (ref: RefObject<HTMLDivElement | null>) => {
 		if (!ref.current) return { faceX: 0, faceY: 0, bodySkew: 0 };
 
 		const rect = ref.current.getBoundingClientRect();
@@ -231,146 +235,203 @@ const AnimatedLoginIllustration = ({
 	const orange = getFaceState(orangeRef);
 
 	return (
-		<div className="animated-login-illustration" aria-hidden="true">
-			<div className="character-stage">
-				<div
-					ref={purpleRef}
-					className="character-block character-purple"
-					style={{
-						height: isTyping || (hasPassword && !passwordVisible) ? 440 : 400,
-						transform:
-							hasPassword && passwordVisible
-								? "skewX(0deg)"
-								: isTyping || (hasPassword && !passwordVisible)
-								? `skewX(${purple.bodySkew - 12}deg) translateX(40px)`
-								: `skewX(${purple.bodySkew}deg)`
-					}}
-				>
-					<div
-						className="character-eyes"
-						style={{
-							left: hasPassword && passwordVisible ? 20 : isLookingAtEachOther ? 55 : 45 + purple.faceX,
-							top: hasPassword && passwordVisible ? 35 : isLookingAtEachOther ? 65 : 40 + purple.faceY
-						}}
-					>
-						<EyeBall
-							cursor={cursor}
-							isBlinking={isPurpleBlinking}
-							forceLookX={hasPassword && passwordVisible ? (isPurplePeeking ? 4 : -4) : isLookingAtEachOther ? 3 : undefined}
-							forceLookY={hasPassword && passwordVisible ? (isPurplePeeking ? 5 : -4) : isLookingAtEachOther ? 4 : undefined}
-						/>
-						<EyeBall
-							cursor={cursor}
-							isBlinking={isPurpleBlinking}
-							forceLookX={hasPassword && passwordVisible ? (isPurplePeeking ? 4 : -4) : isLookingAtEachOther ? 3 : undefined}
-							forceLookY={hasPassword && passwordVisible ? (isPurplePeeking ? 5 : -4) : isLookingAtEachOther ? 4 : undefined}
-						/>
-					</div>
-				</div>
+		<div className="login-showcase" aria-hidden="true">
+			<div className="showcase-copy">
+				<h2>
+					数字农业
+					<span className="showcase-copy__dot" />
+					智慧管理
+				</h2>
+				<p>让农业管理更高效，让土地更有价值</p>
+			</div>
 
-				<div
-					ref={blackRef}
-					className="character-block character-black"
-					style={{
-						transform:
-							hasPassword && passwordVisible
-								? "skewX(0deg)"
-								: isLookingAtEachOther
-								? `skewX(${black.bodySkew * 1.5 + 10}deg) translateX(20px)`
-								: `skewX(${black.bodySkew * 1.5}deg)`
-					}}
-				>
-					<div
-						className="character-eyes character-eyes-black"
-						style={{
-							left: hasPassword && passwordVisible ? 10 : isLookingAtEachOther ? 32 : 26 + black.faceX,
-							top: hasPassword && passwordVisible ? 28 : isLookingAtEachOther ? 12 : 32 + black.faceY
-						}}
-					>
-						<EyeBall
-							cursor={cursor}
-							size={16}
-							pupilSize={6}
-							maxDistance={4}
-							isBlinking={isBlackBlinking}
-							forceLookX={hasPassword && passwordVisible ? -4 : isLookingAtEachOther ? 0 : undefined}
-							forceLookY={hasPassword && passwordVisible ? -4 : isLookingAtEachOther ? -4 : undefined}
-						/>
-						<EyeBall
-							cursor={cursor}
-							size={16}
-							pupilSize={6}
-							maxDistance={4}
-							isBlinking={isBlackBlinking}
-							forceLookX={hasPassword && passwordVisible ? -4 : isLookingAtEachOther ? 0 : undefined}
-							forceLookY={hasPassword && passwordVisible ? -4 : isLookingAtEachOther ? -4 : undefined}
-						/>
-					</div>
-				</div>
+			<div className="showcase-field" />
+			<div className="showcase-field-rows" />
 
-				<div
-					ref={orangeRef}
-					className="character-block character-orange"
-					style={{
-						transform: hasPassword && passwordVisible ? "skewX(0deg)" : `skewX(${orange.bodySkew}deg)`
-					}}
-				>
-					<div
-						className="character-eyes character-eyes-pupil"
-						style={{
-							left: hasPassword && passwordVisible ? 50 : 82 + orange.faceX,
-							top: hasPassword && passwordVisible ? 85 : 90 + orange.faceY
-						}}
-					>
-						<Pupil
-							cursor={cursor}
-							forceLookX={hasPassword && passwordVisible ? -5 : undefined}
-							forceLookY={hasPassword && passwordVisible ? -4 : undefined}
-						/>
-						<Pupil
-							cursor={cursor}
-							forceLookX={hasPassword && passwordVisible ? -5 : undefined}
-							forceLookY={hasPassword && passwordVisible ? -4 : undefined}
-						/>
-					</div>
-				</div>
+			<div className="showcase-drone">
+				<span className="showcase-drone__prop showcase-drone__prop--lt" />
+				<span className="showcase-drone__prop showcase-drone__prop--rt" />
+				<span className="showcase-drone__prop showcase-drone__prop--lb" />
+				<span className="showcase-drone__prop showcase-drone__prop--rb" />
+				<span className="showcase-drone__arm showcase-drone__arm--lt" />
+				<span className="showcase-drone__arm showcase-drone__arm--rt" />
+				<span className="showcase-drone__arm showcase-drone__arm--lb" />
+				<span className="showcase-drone__arm showcase-drone__arm--rb" />
+				<span className="showcase-drone__body" />
+				<span className="showcase-drone__camera" />
+			</div>
 
-				<div
-					ref={yellowRef}
-					className="character-block character-yellow"
-					style={{
-						transform: hasPassword && passwordVisible ? "skewX(0deg)" : `skewX(${yellow.bodySkew}deg)`
-					}}
-				>
+			<div className="showcase-network">
+				<span className="showcase-network__ring showcase-network__ring--outer" />
+				<span className="showcase-network__ring showcase-network__ring--middle" />
+				<span className="showcase-network__ring showcase-network__ring--inner" />
+				<span className="showcase-network__core" />
+			</div>
+
+			<div className="showcase-cards">
+				{statusCards.map(card => (
+					<div className="showcase-card" key={card.label}>
+						<div className="showcase-card__icon">{card.icon}</div>
+						<div className="showcase-card__content">
+							<span>{card.label}</span>
+							<strong>{card.value}</strong>
+						</div>
+					</div>
+				))}
+			</div>
+
+			<div className="animated-login-illustration">
+				<div className="character-stage">
 					<div
-						className="character-eyes character-eyes-pupil"
+						ref={purpleRef}
+						className="character-block character-purple"
 						style={{
-							left: hasPassword && passwordVisible ? 20 : 52 + yellow.faceX,
-							top: hasPassword && passwordVisible ? 35 : 40 + yellow.faceY
+							height: isTyping || (hasPassword && !passwordVisible) ? 440 : 400,
+							transform:
+								hasPassword && passwordVisible
+									? "skewX(0deg)"
+									: isTyping || (hasPassword && !passwordVisible)
+									? `skewX(${purple.bodySkew - 12}deg) translateX(40px)`
+									: `skewX(${purple.bodySkew}deg)`
 						}}
 					>
-						<Pupil
-							cursor={cursor}
-							forceLookX={hasPassword && passwordVisible ? -5 : undefined}
-							forceLookY={hasPassword && passwordVisible ? -4 : undefined}
-						/>
-						<Pupil
-							cursor={cursor}
-							forceLookX={hasPassword && passwordVisible ? -5 : undefined}
-							forceLookY={hasPassword && passwordVisible ? -4 : undefined}
+						<div
+							className="character-eyes"
+							style={{
+								left: hasPassword && passwordVisible ? 20 : isLookingAtEachOther ? 55 : 45 + purple.faceX,
+								top: hasPassword && passwordVisible ? 35 : isLookingAtEachOther ? 65 : 40 + purple.faceY
+							}}
+						>
+							<EyeBall
+								cursor={cursor}
+								isBlinking={isPurpleBlinking}
+								forceLookX={hasPassword && passwordVisible ? (isPurplePeeking ? 4 : -4) : isLookingAtEachOther ? 3 : undefined}
+								forceLookY={hasPassword && passwordVisible ? (isPurplePeeking ? 5 : -4) : isLookingAtEachOther ? 4 : undefined}
+							/>
+							<EyeBall
+								cursor={cursor}
+								isBlinking={isPurpleBlinking}
+								forceLookX={hasPassword && passwordVisible ? (isPurplePeeking ? 4 : -4) : isLookingAtEachOther ? 3 : undefined}
+								forceLookY={hasPassword && passwordVisible ? (isPurplePeeking ? 5 : -4) : isLookingAtEachOther ? 4 : undefined}
+							/>
+						</div>
+					</div>
+
+					<div
+						ref={blackRef}
+						className="character-block character-black"
+						style={{
+							transform:
+								hasPassword && passwordVisible
+									? "skewX(0deg)"
+									: isLookingAtEachOther
+									? `skewX(${black.bodySkew * 1.5 + 10}deg) translateX(20px)`
+									: `skewX(${black.bodySkew * 1.5}deg)`
+						}}
+					>
+						<div
+							className="character-eyes character-eyes-black"
+							style={{
+								left: hasPassword && passwordVisible ? 10 : isLookingAtEachOther ? 32 : 26 + black.faceX,
+								top: hasPassword && passwordVisible ? 28 : isLookingAtEachOther ? 12 : 32 + black.faceY
+							}}
+						>
+							<EyeBall
+								cursor={cursor}
+								size={16}
+								pupilSize={6}
+								maxDistance={4}
+								isBlinking={isBlackBlinking}
+								forceLookX={hasPassword && passwordVisible ? -4 : isLookingAtEachOther ? 0 : undefined}
+								forceLookY={hasPassword && passwordVisible ? -4 : isLookingAtEachOther ? -4 : undefined}
+							/>
+							<EyeBall
+								cursor={cursor}
+								size={16}
+								pupilSize={6}
+								maxDistance={4}
+								isBlinking={isBlackBlinking}
+								forceLookX={hasPassword && passwordVisible ? -4 : isLookingAtEachOther ? 0 : undefined}
+								forceLookY={hasPassword && passwordVisible ? -4 : isLookingAtEachOther ? -4 : undefined}
+							/>
+						</div>
+					</div>
+
+					<div
+						ref={orangeRef}
+						className="character-block character-orange"
+						style={{
+							transform: hasPassword && passwordVisible ? "skewX(0deg)" : `skewX(${orange.bodySkew}deg)`
+						}}
+					>
+						<div
+							className="character-eyes character-eyes-pupil"
+							style={{
+								left: hasPassword && passwordVisible ? 50 : 82 + orange.faceX,
+								top: hasPassword && passwordVisible ? 85 : 90 + orange.faceY
+							}}
+						>
+							<Pupil
+								cursor={cursor}
+								forceLookX={hasPassword && passwordVisible ? -5 : undefined}
+								forceLookY={hasPassword && passwordVisible ? -4 : undefined}
+							/>
+							<Pupil
+								cursor={cursor}
+								forceLookX={hasPassword && passwordVisible ? -5 : undefined}
+								forceLookY={hasPassword && passwordVisible ? -4 : undefined}
+							/>
+						</div>
+					</div>
+
+					<div
+						ref={yellowRef}
+						className="character-block character-yellow"
+						style={{
+							transform: hasPassword && passwordVisible ? "skewX(0deg)" : `skewX(${yellow.bodySkew}deg)`
+						}}
+					>
+						<div
+							className="character-eyes character-eyes-pupil"
+							style={{
+								left: hasPassword && passwordVisible ? 20 : 52 + yellow.faceX,
+								top: hasPassword && passwordVisible ? 35 : 40 + yellow.faceY
+							}}
+						>
+							<Pupil
+								cursor={cursor}
+								forceLookX={hasPassword && passwordVisible ? -5 : undefined}
+								forceLookY={hasPassword && passwordVisible ? -4 : undefined}
+							/>
+							<Pupil
+								cursor={cursor}
+								forceLookX={hasPassword && passwordVisible ? -5 : undefined}
+								forceLookY={hasPassword && passwordVisible ? -4 : undefined}
+							/>
+						</div>
+						<div
+							className="character-mouth"
+							style={{
+								left: hasPassword && passwordVisible ? 10 : 40 + yellow.faceX,
+								top: hasPassword && passwordVisible ? 88 : 88 + yellow.faceY
+							}}
 						/>
 					</div>
-					<div
-						className="character-mouth"
-						style={{
-							left: hasPassword && passwordVisible ? 10 : 40 + yellow.faceX,
-							top: hasPassword && passwordVisible ? 88 : 88 + yellow.faceY
-						}}
-					/>
 				</div>
+			</div>
+
+			<div className="showcase-hill" />
+
+			<div className="showcase-sprout showcase-sprout--left">
+				<span />
+				<span />
+			</div>
+			<div className="showcase-sprout showcase-sprout--right">
+				<span />
+				<span />
 			</div>
 		</div>
 	);
 };
 
-export default AnimatedLoginIllustration;
+export default LoginShowcase;
