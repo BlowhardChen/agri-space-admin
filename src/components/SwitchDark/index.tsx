@@ -1,4 +1,5 @@
 import { Switch } from "antd";
+import { MoonFilled, SunFilled } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { setThemeConfig } from "@/redux/modules/global/action";
 
@@ -11,9 +12,9 @@ const SwitchDark = (props: any) => {
 	return (
 		<Switch
 			className="dark"
-			defaultChecked={themeConfig.isDark}
-			checkedChildren={<>🌞</>}
-			unCheckedChildren={<>🌜</>}
+			checked={themeConfig.isDark}
+			checkedChildren={<MoonFilled />}
+			unCheckedChildren={<SunFilled />}
 			onChange={onChange}
 		/>
 	);

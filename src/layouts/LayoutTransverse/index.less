@@ -1,0 +1,147 @@
+.layout-transverse {
+	flex-direction: column;
+	background: #f0f2f5;
+
+	.layout-transverse__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 55px;
+		padding: 0 24px 0 0;
+		line-height: normal;
+		background: #fff !important;
+		border-bottom: 1px solid #e4e7ed;
+	}
+
+	.layout-transverse__header-left {
+		display: flex;
+		align-items: center;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.layout-transverse__brand {
+		display: flex;
+		align-items: center;
+		height: 55px;
+		padding: 0 24px;
+		flex-shrink: 0;
+
+		.logo-box {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			width: 100%;
+			height: 100%;
+			border-bottom: none !important;
+
+			.logo-img {
+				width: 30px;
+				margin: 0;
+				flex-shrink: 0;
+			}
+		}
+
+		.logo-text {
+			margin-left: 10px;
+			font-size: 16px;
+			font-weight: 700;
+			white-space: nowrap;
+		}
+	}
+
+	.layout-transverse__menu-wrap {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.layout-transverse__menu {
+		height: 55px;
+
+		.ant-spin-nested-loading,
+		.ant-spin-container {
+			height: 100%;
+		}
+
+		.ant-menu {
+			display: flex;
+			align-items: center;
+			height: 55px;
+			border-bottom: none;
+			line-height: 55px;
+		}
+
+		.ant-menu-overflow {
+			display: flex;
+			align-items: center;
+			width: 100%;
+		}
+
+		.ant-menu-item,
+		.ant-menu-submenu {
+			top: 0;
+			margin: 0 12px 0 0 !important;
+		}
+
+		.ant-menu-item::after,
+		.ant-menu-submenu::after {
+			bottom: 0 !important;
+		}
+	}
+
+	.layout-transverse__header-right {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+
+		.icon-style {
+			margin-right: 22px;
+			font-size: 19px;
+			line-height: 19px;
+			cursor: pointer;
+			color: rgba(0, 0, 0, 0.85);
+		}
+
+		.username {
+			margin: 0 20px 0 0;
+			font-size: 15px;
+			color: rgba(0, 0, 0, 0.85);
+		}
+
+		.ant-avatar {
+			cursor: pointer;
+		}
+	}
+
+	.layout-transverse__main {
+		min-width: 0;
+	}
+}
+
+.layout-transverse--dark {
+	background: #141414;
+
+	.layout-transverse__header {
+		background: #1f1f1f !important;
+		border-bottom-color: #414243;
+	}
+
+	.layout-transverse__brand {
+		.logo-text {
+			color: #d9d9d9;
+		}
+	}
+
+	.layout-transverse__menu {
+		.ant-menu {
+			background: transparent !important;
+		}
+	}
+
+	.layout-transverse__header-right {
+		.icon-style,
+		.username {
+			color: #d9d9d9;
+		}
+	}
+}

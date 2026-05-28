@@ -1,60 +1,71 @@
-import { useEffect } from "react";
-import { Outlet } from "react-router-dom";
-import { Layout } from "antd";
-import { setAuthButtons } from "@/redux/modules/auth/action";
-import { updateCollapse } from "@/redux/modules/menu/action";
-import { getAuthorButtons } from "@/api/modules/login";
+import { useEffect, useMemo, useState } from "react";
+import { setAuthButtons, setAuthRouter } from "@/redux/modules/auth/action";
+import { updateCollapse, setMenuList } from "@/redux/modules/menu/action";
+import { setBreadcrumbList } from "@/redux/modules/breadcrumb/action";
+import { getAuthorButtons, getMenuList } from "@/api/modules/login";
 import { connect } from "react-redux";
-import LayoutMenu from "./components/Menu";
-import LayoutHeader from "./components/Header";
-import LayoutTabs from "./components/Tabs";
-import LayoutFooter from "./components/Footer";
+import { findAllBreadcrumb, handleRouter } from "@/utils/util";
+import LayoutVertical from "./Layoutvertical";
+import LayoutClassic from "./LayoutClassic";
+import LayoutTransverse from "./LayoutTransverse";
+import LayoutColumns from "./LayoutColumns";
+import type { LayoutMode } from "./utils";
 import "./index.less";
 
 const LayoutIndex = (props: any) => {
-	const { Sider, Content } = Layout;
-	const { isCollapse, updateCollapse, setAuthButtons } = props;
+	const { themeConfig, updateCollapse, setAuthButtons, setBreadcrumbList, setAuthRouter, setMenuList } = props;
+	const [menuLoading, setMenuLoading] = useState(false);
 
-	// 获取按钮权限列表
 	const getAuthButtonsList = async () => {
 		const { data } = await getAuthorButtons();
 		setAuthButtons(data);
 	};
 
-	// 监听窗口大小变化
-	const listeningWindow = () => {
-		window.onresize = () => {
-			return (() => {
-				let screenWidth = document.body.clientWidth;
-				if (!isCollapse && screenWidth < 1200) updateCollapse(true);
-				if (!isCollapse && screenWidth > 1200) updateCollapse(false);
-			})();
-		};
+	const getMenuData = async () => {
+		setMenuLoading(true);
+		try {
+			const { data } = await getMenuList();
+			if (!data) return;
+			setBreadcrumbList(findAllBreadcrumb(data));
+			setAuthRouter(handleRouter(data));
+			setMenuList(data);
+		} finally {
+			setMenuLoading(false);
+		}
 	};
 
 	useEffect(() => {
-		listeningWindow();
+		const handleResize = () => {
+			updateCollapse(document.body.clientWidth < 1200);
+		};
+
+		handleResize();
+		window.addEventListener("resize", handleResize);
 		getAuthButtonsList();
+		getMenuData();
+
+		return () => {
+			window.removeEventListener("resize", handleResize);
+		};
 	}, []);
 
-	return (
-		// 这里不用 Layout 组件原因是切换页面时样式会先错乱然后在正常显示，造成页面闪屏效果
-		<section className="container">
-			<Sider trigger={null} collapsed={props.isCollapse} width={220} theme="dark">
-				<LayoutMenu></LayoutMenu>
-			</Sider>
-			<Layout>
-				<LayoutHeader></LayoutHeader>
-				<LayoutTabs></LayoutTabs>
-				<Content>
-					<Outlet></Outlet>
-				</Content>
-				<LayoutFooter></LayoutFooter>
-			</Layout>
-		</section>
-	);
+	const CurrentLayout = useMemo(() => {
+		const layoutMap: Record<LayoutMode, any> = {
+			vertical: LayoutVertical,
+			classic: LayoutClassic,
+			transverse: LayoutTransverse,
+			columns: LayoutColumns
+		};
+		const currentLayout = (themeConfig.layout ?? "vertical") as LayoutMode;
+		return layoutMap[currentLayout] ?? LayoutVertical;
+	}, [themeConfig.layout]);
+
+	return <CurrentLayout {...props} menuLoading={menuLoading}></CurrentLayout>;
 };
 
-const mapStateToProps = (state: any) => state.menu;
-const mapDispatchToProps = { setAuthButtons, updateCollapse };
+const mapStateToProps = (state: any) => ({
+	...state.menu,
+	themeConfig: state.global.themeConfig
+});
+const mapDispatchToProps = { setAuthButtons, setBreadcrumbList, setAuthRouter, setMenuList, updateCollapse };
 export default connect(mapStateToProps, mapDispatchToProps)(LayoutIndex);

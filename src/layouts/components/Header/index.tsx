@@ -8,13 +8,13 @@ import Theme from "./components/Theme";
 import Fullscreen from "./components/Fullscreen";
 import "./index.less";
 
-const LayoutHeader = () => {
+const LayoutHeader = ({ showCollapse = true }: { showCollapse?: boolean }) => {
 	const { Header } = Layout;
 
 	return (
 		<Header>
 			<div className="header-lf">
-				<CollapseIcon />
+				{showCollapse ? <CollapseIcon /> : null}
 				<BreadcrumbNav />
 			</div>
 			<div className="header-ri">
