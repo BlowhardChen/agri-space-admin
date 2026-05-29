@@ -50,7 +50,7 @@
 		overflow: hidden;
 		border: 1px solid #dfe8da;
 		border-radius: 36px;
-		background: #ffffff;
+		background: #fff;
 		box-shadow: 0 28px 80px rgb(14 43 15 / 12%);
 
 		> .dark {
@@ -68,7 +68,7 @@
 
 			.anticon {
 				font-size: 12px;
-				color: #ffffff;
+				color: #fff;
 			}
 		}
 
@@ -89,16 +89,31 @@
 		min-width: 0;
 		padding: 58px 56px 38px 66px;
 		overflow: hidden;
-		color: #ffffff;
-		background: radial-gradient(circle at 56% 36%, fade(#86bf67, 12%), transparent 24%),
-			linear-gradient(135deg, #12331f 0%, #102c1b 42%, #173824 100%);
+		color: #fff;
+		background-image: linear-gradient(90deg, rgb(8 34 18 / 90%) 0%, rgb(11 41 21 / 78%) 36%, rgb(10 38 19 / 42%) 100%),
+			linear-gradient(180deg, rgb(5 21 12 / 12%) 0%, rgb(8 27 15 / 20%) 48%, rgb(5 22 13 / 62%) 100%),
+			url("../../assets/images/login_field_bg.png");
+		background-position: center;
+		background-size: cover;
 
 		&::before {
 			position: absolute;
 			inset: 0;
-			background: linear-gradient(180deg, rgb(255 255 255 / 5%) 0%, transparent 26%),
-				repeating-radial-gradient(circle at 70% 0%, fade(#90c56d, 12%) 0 1.5px, transparent 1.5px 22px);
-			opacity: 0.8;
+			background: linear-gradient(180deg, rgb(255 255 255 / 4%) 0%, transparent 22%),
+				radial-gradient(circle at 34% 66%, rgb(156 232 107 / 15%) 0 3px, transparent 4px),
+				radial-gradient(circle at 36% 68%, rgb(156 232 107 / 22%) 0 7px, transparent 8px);
+			opacity: 0.78;
+			content: "";
+			pointer-events: none;
+		}
+
+		&::after {
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 142px;
+			background: linear-gradient(180deg, rgb(8 31 16 / 0%) 0%, rgb(6 28 14 / 82%) 56%, #082112 100%);
 			content: "";
 			pointer-events: none;
 		}
@@ -108,7 +123,7 @@
 	.login-showcase,
 	.login-left-links {
 		position: relative;
-		z-index: 2;
+		z-index: 3;
 	}
 
 	.login-brand {
@@ -123,7 +138,7 @@
 		width: 54px;
 		height: 54px;
 		border-radius: 50%;
-		background: linear-gradient(160deg, #ffffff 0%, #d9e8d5 100%);
+		background: linear-gradient(160deg, #fff 0%, #d9e8d5 100%);
 		box-shadow: 0 12px 28px rgb(0 0 0 / 18%), inset 0 -6px 14px rgb(71 148 70 / 14%);
 	}
 
@@ -209,6 +224,7 @@
 			font-size: 58px;
 			line-height: 1.12;
 			letter-spacing: 0;
+			color: #fff;
 			text-shadow: 0 10px 24px rgb(0 0 0 / 20%);
 		}
 
@@ -233,54 +249,38 @@
 	.showcase-field-rows {
 		position: absolute;
 		inset: 0;
-		border-radius: 28px 0 0 0;
+		border-radius: 28px 0 0;
 		pointer-events: none;
 	}
 
 	.showcase-field {
-		left: 30%;
-		background: linear-gradient(144deg, transparent 8%, rgb(0 0 0 / 34%) 100%),
-			linear-gradient(180deg, #2b592f 0%, #4a7038 32%, #1c3a22 100%);
-		clip-path: polygon(12% 0, 100% 0, 100% 100%, 0 100%);
-		opacity: 0.92;
+		display: none;
 
 		&::before {
-			position: absolute;
-			inset: 0;
-			background: repeating-linear-gradient(126deg, rgb(255 255 255 / 7%) 0 1px, transparent 1px 48px),
-				repeating-linear-gradient(36deg, rgb(255 255 255 / 7%) 0 1px, transparent 1px 52px),
-				linear-gradient(180deg, rgb(255 255 255 / 8%) 0%, transparent 42%);
-			content: "";
-			opacity: 0.85;
+			display: none;
 		}
 	}
 
 	.showcase-field-rows {
-		left: 50%;
-		right: 3%;
-		top: 16%;
-		bottom: 18%;
-		background: repeating-linear-gradient(148deg, rgb(255 255 255 / 16%) 0 2px, transparent 2px 54px),
-			repeating-linear-gradient(58deg, rgb(255 255 255 / 13%) 0 2px, transparent 2px 58px);
-		clip-path: polygon(8% 0, 100% 0, 100% 100%, 0 100%);
-		opacity: 0.36;
+		display: none;
 	}
 
 	.showcase-drone {
 		position: absolute;
-		top: 210px;
-		left: 92px;
-		z-index: 3;
+		top: 110px;
+		left: 48px;
+		z-index: 5;
 		width: 174px;
-		height: 88px;
-		filter: drop-shadow(0 14px 18px rgb(0 0 0 / 18%));
+		height: 70px;
+		background: url("../../assets/images/login_drone_cutout.png") center / contain no-repeat;
+		filter: drop-shadow(0 18px 24px rgb(0 0 0 / 22%));
 	}
 
 	.showcase-drone__arm,
 	.showcase-drone__body,
 	.showcase-drone__camera,
 	.showcase-drone__prop {
-		position: absolute;
+		display: none;
 	}
 
 	.showcase-drone__body {
@@ -432,7 +432,7 @@
 
 	.showcase-cards {
 		position: absolute;
-		left: 0;
+		left: -12px;
 		bottom: 80px;
 		z-index: 4;
 		display: flex;
@@ -455,15 +455,90 @@
 	}
 
 	.showcase-card__icon {
+		position: relative;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		flex: 0 0 34px;
 		width: 34px;
 		height: 34px;
 		border-radius: 10px;
 		background: transparent;
 		color: #91e05c;
 		font-size: 28px;
+
+		&::before,
+		&::after {
+			position: absolute;
+			content: "";
+		}
+	}
+
+	.showcase-card__icon.is-leaf {
+		background: radial-gradient(ellipse at 11px 20px, #91e85c 0 8px, transparent 9px),
+			radial-gradient(ellipse at 24px 14px, #58b743 0 10px, transparent 11px),
+			linear-gradient(180deg, #98ea63 0%, #58b743 100%) 16px 12px / 3px 21px no-repeat;
+
+		&::before,
+		&::after {
+			display: none;
+		}
+	}
+
+	.showcase-card__icon.is-thermometer {
+		&::before {
+			left: 14px;
+			top: 3px;
+			width: 8px;
+			height: 23px;
+			border: 3px solid #8fe35b;
+			border-bottom: none;
+			border-radius: 999px 999px 0 0;
+		}
+
+		&::after {
+			left: 9px;
+			bottom: 2px;
+			width: 18px;
+			height: 18px;
+			border: 3px solid #8fe35b;
+			border-radius: 50%;
+			background: rgb(143 227 91 / 18%);
+		}
+	}
+
+	.showcase-card__icon.is-drop {
+		&::before {
+			left: 7px;
+			top: 3px;
+			width: 21px;
+			height: 28px;
+			border-radius: 18px 18px 18px 4px;
+			background: linear-gradient(180deg, #8fe35b 0%, #45a83d 100%);
+			transform: rotate(45deg);
+		}
+	}
+
+	.showcase-card__icon.is-chart {
+		&::before {
+			left: 5px;
+			bottom: 5px;
+			width: 24px;
+			height: 20px;
+			border-left: 3px solid #8fe35b;
+			border-bottom: 3px solid #8fe35b;
+		}
+
+		&::after {
+			left: 11px;
+			top: 9px;
+			width: 20px;
+			height: 11px;
+			border-top: 3px solid #8fe35b;
+			border-right: 3px solid #8fe35b;
+			transform: skew(-24deg) rotate(-2deg);
+			transform-origin: right top;
+		}
 	}
 
 	.showcase-card__content {
@@ -499,8 +574,8 @@
 
 	.animated-login-illustration {
 		position: absolute;
-		right: 72px;
-		bottom: 18px;
+		right: 98px;
+		bottom: 42px;
 		z-index: 3;
 		display: flex;
 		align-items: flex-end;
@@ -620,7 +695,7 @@
 			bottom: 22px;
 			width: 20px;
 			height: 34px;
-			border-radius: 20px 20px 0 20px;
+			border-radius: 20px 20px 0;
 			background: linear-gradient(180deg, #95d85f 0%, #6aa23d 100%);
 			box-shadow: 0 6px 12px rgb(0 0 0 / 16%);
 		}
@@ -638,6 +713,7 @@
 	}
 
 	.showcase-sprout--left {
+		display: none;
 		left: 356px;
 		transform: rotate(-10deg);
 
@@ -654,8 +730,9 @@
 	}
 
 	.showcase-sprout--right {
-		right: 20px;
-		transform: scale(1.08);
+		right: 40px;
+		bottom: 74px;
+		transform: scale(1.1);
 
 		span:first-child {
 			left: 0;
@@ -705,7 +782,7 @@
 		justify-content: center;
 		padding: 70px 72px 54px;
 		background: radial-gradient(circle at 18% 8%, fade(#dce8d2, 36%), transparent 20%),
-			radial-gradient(circle at 100% 56%, fade(#d2e4c7, 38%), transparent 22%), linear-gradient(180deg, #ffffff 0%, #fbfcf9 100%);
+			radial-gradient(circle at 100% 56%, fade(#d2e4c7, 38%), transparent 22%), linear-gradient(180deg, #fff 0%, #fbfcf9 100%);
 
 		&::before,
 		&::after {
@@ -794,7 +871,7 @@
 			padding: 0 18px;
 			border: 1px solid #d6ddd2;
 			border-radius: 12px;
-			background: #ffffff;
+			background: #fff;
 			box-shadow: 0 10px 24px rgb(18 44 20 / 4%);
 			transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 		}
@@ -938,7 +1015,7 @@
 
 			.ant-btn-default {
 				border-color: #d9e3d4;
-				background: #ffffff;
+				background: #fff;
 				color: #223327;
 				font-weight: 600;
 

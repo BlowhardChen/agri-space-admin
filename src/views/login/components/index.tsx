@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { BarChartOutlined, CloudOutlined, ExperimentOutlined, LineChartOutlined } from "@ant-design/icons";
 
 interface LoginShowcaseProps {
 	activeField?: "username" | "password" | null;
@@ -26,10 +25,10 @@ interface PupilProps {
 }
 
 const statusCards = [
-	{ icon: <LineChartOutlined />, label: "作物长势", value: "良好" },
-	{ icon: <ExperimentOutlined />, label: "土壤湿度", value: "适宜" },
-	{ icon: <CloudOutlined />, label: "灌溉状态", value: "正常" },
-	{ icon: <BarChartOutlined />, label: "产量预测", value: "↑ 12.5%" }
+	{ iconClass: "is-leaf", label: "作物长势", value: "良好" },
+	{ iconClass: "is-thermometer", label: "土壤湿度", value: "适宜" },
+	{ iconClass: "is-drop", label: "灌溉状态", value: "正常" },
+	{ iconClass: "is-chart", label: "产量预测", value: "↑ 12.5%" }
 ];
 
 const useCursorPosition = () => {
@@ -271,7 +270,7 @@ const LoginShowcase = ({ activeField = null, passwordVisible = false, hasPasswor
 			<div className="showcase-cards">
 				{statusCards.map(card => (
 					<div className="showcase-card" key={card.label}>
-						<div className="showcase-card__icon">{card.icon}</div>
+						<div className={`showcase-card__icon ${card.iconClass}`} />
 						<div className="showcase-card__content">
 							<span>{card.label}</span>
 							<strong>{card.value}</strong>
