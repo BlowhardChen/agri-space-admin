@@ -21,7 +21,6 @@ const LayoutColumns = (props: any) => {
 	const { isCollapse, menuList = [], menuLoading, themeConfig } = props;
 	const menuTheme = themeConfig.isDark ? "dark" : "light";
 	const isDark = themeConfig.isDark;
-	const brandTitle = isCollapse ? "Agri" : "Agri-Space-Admin";
 
 	const currentTopMenu = useMemo(() => {
 		return findTopMenu(menuList, pathname) ?? menuList[0];
@@ -43,7 +42,7 @@ const LayoutColumns = (props: any) => {
 			<Header className="layout-columns__header">
 				<div className="layout-columns__header-left">
 					<div className="layout-columns__brand">
-						<Logo collapsed={false} title={brandTitle}></Logo>
+						<Logo collapsed={false}></Logo>
 						<CollapseIcon />
 					</div>
 				</div>

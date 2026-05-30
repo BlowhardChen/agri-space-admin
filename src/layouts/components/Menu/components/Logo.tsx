@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 const Logo = (props: any) => {
 	const collapsed = props.collapsed ?? props.isCollapse;
-	const title = props.title ?? "Agri-Space-Admin";
+	const title = props.title ?? "农域管理后台";
 
 	return (
 		<div className="logo-box">

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
+import StatusCardIcon, { type StatusCardIconName } from "./StatusCardIcons";
 
 interface LoginShowcaseProps {
-	activeField?: "username" | "password" | null;
+	activeField?: "username" | "password" | "phone" | "captcha" | null;
 	passwordVisible?: boolean;
 	hasPassword?: boolean;
 }
@@ -25,10 +26,10 @@ interface PupilProps {
 }
 
 const statusCards = [
-	{ iconClass: "is-leaf", label: "作物长势", value: "良好" },
-	{ iconClass: "is-thermometer", label: "土壤湿度", value: "适宜" },
-	{ iconClass: "is-drop", label: "灌溉状态", value: "正常" },
-	{ iconClass: "is-chart", label: "产量预测", value: "↑ 12.5%" }
+	{ icon: "crop" as StatusCardIconName, label: "作物长势" },
+	{ icon: "humidity" as StatusCardIconName, label: "土壤湿度" },
+	{ icon: "irrigation" as StatusCardIconName, label: "灌溉状态" },
+	{ icon: "yield" as StatusCardIconName, label: "产量预测" }
 ];
 
 const useCursorPosition = () => {
@@ -169,7 +170,8 @@ const LoginShowcase = ({ activeField = null, passwordVisible = false, hasPasswor
 	const [isPurplePeeking, setIsPurplePeeking] = useState(false);
 	const isPurpleBlinking = useBlinking();
 	const isBlackBlinking = useBlinking();
-	const isTyping = activeField === "username" || activeField === "password";
+	const isTyping =
+		activeField === "username" || activeField === "password" || activeField === "phone" || activeField === "captcha";
 
 	useEffect(() => {
 		if (!isTyping) {
@@ -270,10 +272,11 @@ const LoginShowcase = ({ activeField = null, passwordVisible = false, hasPasswor
 			<div className="showcase-cards">
 				{statusCards.map(card => (
 					<div className="showcase-card" key={card.label}>
-						<div className={`showcase-card__icon ${card.iconClass}`} />
+						<div className="showcase-card__icon">
+							<StatusCardIcon className="showcase-card__icon-svg" name={card.icon} />
+						</div>
 						<div className="showcase-card__content">
 							<span>{card.label}</span>
-							<strong>{card.value}</strong>
 						</div>
 					</div>
 				))}

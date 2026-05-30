@@ -28,7 +28,7 @@ const App = (props: any) => {
 	};
 
 	useEffect(() => {
-		if (!themeConfig.primary || themeConfig.primary === "#1890ff") {
+		if (!themeConfig.primary) {
 			setThemeConfig({ ...themeConfig, primary: DEFAULT_PRIMARY_COLOR });
 		}
 	}, []);

@@ -1,16 +1,23 @@
 import { useState } from "react";
-import LoginForm from "./components/LoginForm";
+import { connect } from "react-redux";
+import LoginForm, { type LoginPanelMode } from "./components/LoginForm";
 import LoginShowcase from "./components";
 import SwitchDark from "@/components/SwitchDark";
 import "./index.less";
 
-const Login = () => {
-	const [activeField, setActiveField] = useState<"username" | "password" | null>(null);
-	const [passwordVisible, setPasswordVisible] = useState(false);
-	const [hasPassword, setHasPassword] = useState(false);
+interface LoginProps {
+	themeConfig?: {
+		isDark?: boolean;
+	};
+}
+
+const Login = ({ themeConfig }: LoginProps) => {
+	const [panelMode, setPanelMode] = useState<LoginPanelMode>("login");
+	const isDark = Boolean(themeConfig?.isDark);
+	const isRegisterMode = panelMode === "register";
 
 	return (
-		<div className="login-container">
+		<div className={`login-container ${isDark ? "login-container--dark" : ""}`.trim()}>
 			<div className="login-box">
 				<SwitchDark />
 				<div className="login-left">
@@ -27,7 +34,7 @@ const Login = () => {
 						</div>
 					</div>
 
-					<LoginShowcase activeField={activeField} passwordVisible={passwordVisible} hasPassword={hasPassword} />
+					<LoginShowcase />
 
 					<div className="login-left-links">
 						<span>隐私政策</span>
@@ -40,22 +47,32 @@ const Login = () => {
 					<div className="login-right-panel">
 						<div className="login-right-header">
 							<h1>
-								欢迎<span>回来</span>!
+								{isRegisterMode ? (
+									<>
+										创建<span>账号</span>
+									</>
+								) : (
+									<>
+										欢迎<span>回来</span>
+									</>
+								)}
 							</h1>
-							<p>请输入你的登录信息</p>
+							<p>{isRegisterMode ? "填写基础信息，立即开通后台账号" : "请输入你的登录信息"}</p>
 						</div>
 
 						<div className="login-form-shell">
-							<LoginForm
-								onFieldFocusChange={setActiveField}
-								onPasswordVisibilityChange={setPasswordVisible}
-								onPasswordFilledChange={setHasPassword}
-							/>
+							<LoginForm panelMode={panelMode} onModeChange={setPanelMode} />
 						</div>
 
 						<div className="login-signup">
-							<span>还没有账号？</span>
-							<button type="button">立即注册</button>
+							<span>{isRegisterMode ? "已经有账号？" : "还没有账号？"}</span>
+							<button
+								type="button"
+								onMouseDown={event => event.preventDefault()}
+								onClick={() => setPanelMode(isRegisterMode ? "login" : "register")}
+							>
+								{isRegisterMode ? "返回登录" : "立即注册"}
+							</button>
 						</div>
 					</div>
 				</div>
@@ -64,4 +81,6 @@ const Login = () => {
 	);
 };
 
-export default Login;
+const mapStateToProps = (state: any) => state.global;
+
+export default connect(mapStateToProps)(Login);

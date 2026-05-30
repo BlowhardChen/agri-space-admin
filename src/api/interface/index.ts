@@ -29,6 +29,11 @@ export namespace Login {
 		username: string;
 		password: string;
 	}
+	export interface ReqRegisterForm {
+		username: string;
+		password: string;
+		phone: string;
+	}
 	export interface ResLogin {
 		access_token: string;
 	}

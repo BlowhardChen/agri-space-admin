@@ -3,6 +3,7 @@ import { setAuthButtons, setAuthRouter } from "@/redux/modules/auth/action";
 import { updateCollapse, setMenuList } from "@/redux/modules/menu/action";
 import { setBreadcrumbList } from "@/redux/modules/breadcrumb/action";
 import { getAuthorButtons, getMenuList } from "@/api/modules/login";
+import { getMockAuthButtons, getMockMenuList, isMockToken } from "@/api/modules/loginMock";
 import { connect } from "react-redux";
 import { findAllBreadcrumb, handleRouter } from "@/utils/util";
 import LayoutVertical from "./Layoutvertical";
@@ -13,18 +14,32 @@ import type { LayoutMode } from "./utils";
 import "./index.less";
 
 const LayoutIndex = (props: any) => {
-	const { themeConfig, updateCollapse, setAuthButtons, setBreadcrumbList, setAuthRouter, setMenuList } = props;
+	const { themeConfig, token, updateCollapse, setAuthButtons, setBreadcrumbList, setAuthRouter, setMenuList } = props;
 	const [menuLoading, setMenuLoading] = useState(false);
 
 	const getAuthButtonsList = async () => {
-		const { data } = await getAuthorButtons();
-		setAuthButtons(data);
+		try {
+			const { data } = await getAuthorButtons();
+			setAuthButtons(data);
+		} catch (error) {
+			if (!isMockToken(token)) throw error;
+			const { data } = await getMockAuthButtons();
+			setAuthButtons(data);
+		}
 	};
 
 	const getMenuData = async () => {
 		setMenuLoading(true);
 		try {
-			const { data } = await getMenuList();
+			let data: Menu.MenuOptions[] | undefined;
+			try {
+				const response = await getMenuList();
+				data = response.data;
+			} catch (error) {
+				if (!isMockToken(token)) throw error;
+				const response = await getMockMenuList();
+				data = response.data;
+			}
 			if (!data) return;
 			setBreadcrumbList(findAllBreadcrumb(data));
 			setAuthRouter(handleRouter(data));
@@ -65,7 +80,8 @@ const LayoutIndex = (props: any) => {
 
 const mapStateToProps = (state: any) => ({
 	...state.menu,
-	themeConfig: state.global.themeConfig
+	themeConfig: state.global.themeConfig,
+	token: state.global.token
 });
 const mapDispatchToProps = { setAuthButtons, setBreadcrumbList, setAuthRouter, setMenuList, updateCollapse };
 export default connect(mapStateToProps, mapDispatchToProps)(LayoutIndex);
