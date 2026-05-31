@@ -94,6 +94,9 @@ const LoginForm = (props: LoginFormProps) => {
 		setRegisterPasswordVisible(false);
 		setConfirmPasswordVisible(false);
 		setCountdown(0);
+		onFieldFocusChange?.(null);
+		onPasswordVisibilityChange?.(false);
+		onPasswordFilledChange?.(false);
 	}, [panelMode]);
 
 	useEffect(() => {
@@ -173,6 +176,9 @@ const LoginForm = (props: LoginFormProps) => {
 		setLoginMode(nextMode);
 		setPasswordVisible(false);
 		setCountdown(0);
+		onFieldFocusChange?.(null);
+		onPasswordVisibilityChange?.(false);
+		onPasswordFilledChange?.(false);
 		form.resetFields(["password", "captcha"]);
 	};
 

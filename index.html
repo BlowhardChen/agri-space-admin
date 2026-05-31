@@ -5,10 +5,56 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title><%- title %></title>
+		<script>
+			(function () {
+				var defaultPrimaryColor = "#379446";
+				var normalizeHexColor = function (color) {
+					if (typeof color !== "string") return "";
+					var normalizedColor = color.trim();
+					if (/^#[0-9a-fA-F]{6}$/.test(normalizedColor)) return normalizedColor;
+					if (/^#[0-9a-fA-F]{3}$/.test(normalizedColor)) {
+						return (
+							"#" +
+							normalizedColor
+								.slice(1)
+								.split("")
+								.map(function (item) {
+									return item + item;
+								})
+								.join("")
+						);
+					}
+					return "";
+				};
+				var parseMaybeString = function (value) {
+					return typeof value === "string" ? JSON.parse(value) : value;
+				};
+
+				try {
+					var persistedState = localStorage.getItem("persist:redux-state");
+					var primaryColor = defaultPrimaryColor;
+
+					if (persistedState) {
+						var state = parseMaybeString(persistedState);
+						var globalState = state && state.global ? parseMaybeString(state.global) : null;
+						var persistedPrimary = globalState && globalState.themeConfig && globalState.themeConfig.primary;
+						primaryColor = normalizeHexColor(persistedPrimary) || defaultPrimaryColor;
+					}
+
+					document.documentElement.style.setProperty("--agri-primary", primaryColor);
+				} catch (error) {
+					document.documentElement.style.setProperty("--agri-primary", defaultPrimaryColor);
+				}
+			})();
+		</script>
 	</head>
 	<body>
 		<div id="root">
 			<style>
+				:root {
+					--agri-primary: #379446;
+				}
+
 				html,
 				body,
 				#root {
@@ -50,7 +96,7 @@
 					display: block;
 					width: 14px;
 					height: 14px;
-					background-color: #1890ff;
+					background-color: var(--agri-primary, #379446);
 					border-radius: 100%;
 					opacity: 0.3;
 					transform: scale(0.75);

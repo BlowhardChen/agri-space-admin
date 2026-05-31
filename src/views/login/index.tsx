@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import LoginForm, { type LoginPanelMode } from "./components/LoginForm";
 import LoginShowcase from "./components";
@@ -11,10 +11,21 @@ interface LoginProps {
 	};
 }
 
+type FocusField = "username" | "password" | "phone" | "captcha" | null;
+
 const Login = ({ themeConfig }: LoginProps) => {
 	const [panelMode, setPanelMode] = useState<LoginPanelMode>("login");
+	const [activeField, setActiveField] = useState<FocusField>(null);
+	const [passwordVisible, setPasswordVisible] = useState(false);
+	const [hasPassword, setHasPassword] = useState(false);
 	const isDark = Boolean(themeConfig?.isDark);
 	const isRegisterMode = panelMode === "register";
+
+	useEffect(() => {
+		setActiveField(null);
+		setPasswordVisible(false);
+		setHasPassword(false);
+	}, [panelMode]);
 
 	return (
 		<div className={`login-container ${isDark ? "login-container--dark" : ""}`.trim()}>
@@ -34,7 +45,7 @@ const Login = ({ themeConfig }: LoginProps) => {
 						</div>
 					</div>
 
-					<LoginShowcase />
+					<LoginShowcase activeField={activeField} passwordVisible={passwordVisible} hasPassword={hasPassword} />
 
 					<div className="login-left-links">
 						<span>隐私政策</span>
@@ -61,7 +72,13 @@ const Login = ({ themeConfig }: LoginProps) => {
 						</div>
 
 						<div className="login-form-shell">
-							<LoginForm panelMode={panelMode} onModeChange={setPanelMode} />
+							<LoginForm
+								panelMode={panelMode}
+								onModeChange={setPanelMode}
+								onFieldFocusChange={setActiveField}
+								onPasswordVisibilityChange={setPasswordVisible}
+								onPasswordFilledChange={setHasPassword}
+							/>
 						</div>
 
 						<div className="login-signup">

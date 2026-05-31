@@ -120,6 +120,7 @@ const setDynamicPrimaryStyle = () => {
 		}
 
 		.ant-btn-primary,
+		.ant-spin-dot-item,
 		.ant-switch-checked,
 		.ant-checkbox-checked .ant-checkbox-inner,
 		.ant-radio-inner::after,
