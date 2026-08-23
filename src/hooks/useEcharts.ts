@@ -7,30 +7,39 @@ import { useEffect, useRef } from "react";
  * @return chart
  * */
 export const useEcharts = (options: echarts.EChartsCoreOption, data?: any) => {
+	// 保存当前 DOM 节点对应的 ECharts 实例。
 	const myChart = useRef<echarts.EChartsType>();
+	// 引用 ECharts 容器供图表 Hook 初始化。
 	const echartsRef = useRef<HTMLDivElement>(null);
 
+	/** 根据容器尺寸重新调整 ECharts 实例。 */
 	const echartsResize = () => {
 		echartsRef && myChart?.current?.resize();
 	};
 
-	useEffect(() => {
-		if (data?.length !== 0) {
-			myChart?.current?.setOption(options);
-		}
-	}, [data]);
+	useEffect(
+		/* 监听指针移动，并在组件卸载时移除监听。 */ () => {
+			if (data?.length !== 0) {
+				myChart?.current?.setOption(options);
+			}
+		},
+		[data]
+	);
 
-	useEffect(() => {
-		if (echartsRef?.current) {
-			myChart.current = echarts.init(echartsRef.current as HTMLDivElement);
-		}
-		myChart?.current?.setOption(options);
-		window.addEventListener("resize", echartsResize, false);
-		return () => {
-			window.removeEventListener("resize", echartsResize);
-			myChart?.current?.dispose();
-		};
-	}, []);
+	useEffect(
+		/* 监听指针移动，并在组件卸载时移除监听。 */ () => {
+			if (echartsRef?.current) {
+				myChart.current = echarts.init(echartsRef.current as HTMLDivElement);
+			}
+			myChart?.current?.setOption(options);
+			window.addEventListener("resize", echartsResize, false);
+			return /* 在组件卸载时移除事件监听。 */ () => {
+				window.removeEventListener("resize", echartsResize);
+				myChart?.current?.dispose();
+			};
+		},
+		[]
+	);
 
 	return [echartsRef];
 };

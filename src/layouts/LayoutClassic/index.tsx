@@ -12,12 +12,18 @@ import Fullscreen from "../components/Header/components/Fullscreen";
 import AvatarIcon from "../components/Header/components/AvatarIcon";
 import "./index.less";
 
+/** 组合经典侧边栏后台布局。 */
 const LayoutClassic = (props: any) => {
+	// 读取 Ant Design 布局的头部、侧栏和内容区组件。
 	const { Header, Sider, Content } = Layout;
+	// 读取侧栏、菜单加载状态和布局主题配置。
 	const { isCollapse, menuList, menuLoading, themeConfig } = props;
+	// 根据明暗模式选择菜单主题。
 	const menuTheme = themeConfig.isDark ? "dark" : "light";
+	// 判断当前是否启用深色主题。
 	const isDark = themeConfig.isDark;
 
+	// 渲染 `LayoutClassic` 的 JSX 模板。
 	return (
 		<section className={`container layout-classic ${isDark ? "layout-classic--dark" : ""}`.trim()}>
 			<Header className="layout-classic__header">

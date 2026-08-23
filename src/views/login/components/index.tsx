@@ -25,6 +25,7 @@ interface PupilProps {
 	cursor: { x: number; y: number };
 }
 
+/** 维护登录页展示的农业状态卡片内容。 */
 const statusCards = [
 	{ icon: "crop" as StatusCardIconName, label: "作物长势" },
 	{ icon: "humidity" as StatusCardIconName, label: "土壤湿度" },
@@ -32,64 +33,94 @@ const statusCards = [
 	{ icon: "yield" as StatusCardIconName, label: "产量预测" }
 ];
 
+/** 监听并返回页面指针坐标。 */
 const useCursorPosition = () => {
+	// 维护页面指针坐标。
 	const [cursor, setCursor] = useState({ x: 0, y: 0 });
 
-	useEffect(() => {
-		const handleMouseMove = (event: MouseEvent) => {
-			setCursor({ x: event.clientX, y: event.clientY });
-		};
+	useEffect(
+		/* 监听指针移动，并在组件卸载时移除监听。 */ () => {
+			/** 记录指针坐标以驱动角色视线动画。 */
+			const handleMouseMove = (event: MouseEvent) => {
+				setCursor({ x: event.clientX, y: event.clientY });
+			};
 
-		window.addEventListener("mousemove", handleMouseMove);
-		return () => window.removeEventListener("mousemove", handleMouseMove);
-	}, []);
+			window.addEventListener("mousemove", handleMouseMove);
+			return /* 在组件卸载时移除事件监听。 */ () => window.removeEventListener("mousemove", handleMouseMove);
+		},
+		[]
+	);
 
 	return cursor;
 };
 
+/** 维护角色随机眨眼状态及其定时器。 */
 const useBlinking = () => {
+	// 维护角色当前眨眼状态。
 	const [isBlinking, setIsBlinking] = useState(false);
 
-	useEffect(() => {
-		let timer: number | undefined;
-		let blinkTimer: number | undefined;
+	useEffect(
+		/* 安排延迟状态更新，并在依赖变化时清理定时器。 */ () => {
+			// 记录当前定时器，便于副作用清理。
+			let timer: number | undefined;
+			// 记录眨眼定时器，便于副作用清理。
+			let blinkTimer: number | undefined;
 
-		const scheduleBlink = () => {
-			timer = window.setTimeout(() => {
-				setIsBlinking(true);
-				blinkTimer = window.setTimeout(() => {
-					setIsBlinking(false);
-					scheduleBlink();
-				}, 150);
-			}, Math.random() * 4000 + 3000);
-		};
+			/** 安排角色眼睛的下一次眨眼动画。 */
+			const scheduleBlink = () => {
+				timer = window.setTimeout(
+					/* 延迟执行角色动画或状态更新。 */ () => {
+						setIsBlinking(true);
+						blinkTimer = window.setTimeout(
+							/* 延迟执行角色动画或状态更新。 */ () => {
+								setIsBlinking(false);
+								scheduleBlink();
+							},
+							150
+						);
+					},
+					Math.random() * 4000 + 3000
+				);
+			};
 
-		scheduleBlink();
+			scheduleBlink();
 
-		return () => {
-			if (timer) window.clearTimeout(timer);
-			if (blinkTimer) window.clearTimeout(blinkTimer);
-		};
-	}, []);
+			return /* 在副作用清理阶段取消定时器。 */ () => {
+				if (timer) window.clearTimeout(timer);
+				if (blinkTimer) window.clearTimeout(blinkTimer);
+			};
+		},
+		[]
+	);
 
 	return isBlinking;
 };
 
+/** 根据眨眼状态渲染角色眼睛。 */
 const EyeBall = ({ size = 18, pupilSize = 7, maxDistance = 5, isBlinking = false, forceLookX, forceLookY, cursor }: EyeProps) => {
+	// 引用角色眼睛元素以计算瞳孔位置。
 	const eyeRef = useRef<HTMLDivElement>(null);
 
+	/** 计算瞳孔跟随指针移动的受限偏移量。 */
 	const getPupilOffset = () => {
 		if (forceLookX !== undefined && forceLookY !== undefined) {
 			return { x: forceLookX, y: forceLookY };
 		}
 		if (!eyeRef.current) return { x: 0, y: 0 };
 
+		// 读取元素视口边界以计算指针偏移。
 		const rect = eyeRef.current.getBoundingClientRect();
+		// 计算目标元素中心的横坐标。
 		const centerX = rect.left + rect.width / 2;
+		// 计算目标元素中心的纵坐标。
 		const centerY = rect.top + rect.height / 2;
+		// 计算指针与元素中心的横向距离。
 		const deltaX = cursor.x - centerX;
+		// 计算指针与元素中心的纵向距离。
 		const deltaY = cursor.y - centerY;
+		// 限制角色跟随指针的最大移动距离。
 		const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), maxDistance);
+		// 计算指针相对角色中心的方向角。
 		const angle = Math.atan2(deltaY, deltaX);
 
 		return {
@@ -98,8 +129,10 @@ const EyeBall = ({ size = 18, pupilSize = 7, maxDistance = 5, isBlinking = false
 		};
 	};
 
+	// 计算视觉元素跟随指针的偏移量。
 	const offset = getPupilOffset();
 
+	// 渲染 `EyeBall` 的 JSX 模板。
 	return (
 		<div
 			ref={eyeRef}
@@ -120,21 +153,31 @@ const EyeBall = ({ size = 18, pupilSize = 7, maxDistance = 5, isBlinking = false
 	);
 };
 
+/** 根据指针位置渲染角色瞳孔偏移。 */
 const Pupil = ({ size = 12, maxDistance = 5, forceLookX, forceLookY, cursor }: PupilProps) => {
+	// 引用角色瞳孔元素以应用位移动画。
 	const pupilRef = useRef<HTMLDivElement>(null);
 
+	/** 计算瞳孔跟随指针移动的受限偏移量。 */
 	const getPupilOffset = () => {
 		if (forceLookX !== undefined && forceLookY !== undefined) {
 			return { x: forceLookX, y: forceLookY };
 		}
 		if (!pupilRef.current) return { x: 0, y: 0 };
 
+		// 读取元素视口边界以计算指针偏移。
 		const rect = pupilRef.current.getBoundingClientRect();
+		// 计算目标元素中心的横坐标。
 		const centerX = rect.left + rect.width / 2;
+		// 计算目标元素中心的纵坐标。
 		const centerY = rect.top + rect.height / 2;
+		// 计算指针与元素中心的横向距离。
 		const deltaX = cursor.x - centerX;
+		// 计算指针与元素中心的纵向距离。
 		const deltaY = cursor.y - centerY;
+		// 限制角色跟随指针的最大移动距离。
 		const distance = Math.min(Math.sqrt(deltaX ** 2 + deltaY ** 2), maxDistance);
+		// 计算指针相对角色中心的方向角。
 		const angle = Math.atan2(deltaY, deltaX);
 
 		return {
@@ -143,8 +186,10 @@ const Pupil = ({ size = 12, maxDistance = 5, forceLookX, forceLookY, cursor }: P
 		};
 	};
 
+	// 计算视觉元素跟随指针的偏移量。
 	const offset = getPupilOffset();
 
+	// 渲染 `Pupil` 的 JSX 模板。
 	return (
 		<div
 			ref={pupilRef}
@@ -158,69 +203,106 @@ const Pupil = ({ size = 12, maxDistance = 5, forceLookX, forceLookY, cursor }: P
 	);
 };
 
+/** 将数值限制在指定上下界之间。 */
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
+/** 渲染登录页品牌文案、状态卡片和角色动画。 */
 const LoginShowcase = ({ activeField = null, passwordVisible = false, hasPassword = false }: LoginShowcaseProps) => {
+	// 读取用于角色动画的当前指针坐标。
 	const cursor = useCursorPosition();
+	// 引用紫色角色元素以计算视口位置。
 	const purpleRef = useRef<HTMLDivElement>(null);
+	// 引用黑色角色元素以计算视口位置。
 	const blackRef = useRef<HTMLDivElement>(null);
+	// 引用黄色角色元素以计算视口位置。
 	const yellowRef = useRef<HTMLDivElement>(null);
+	// 引用橙色角色元素以计算视口位置。
 	const orangeRef = useRef<HTMLDivElement>(null);
+	// 维护角色是否相互注视的动画状态。
 	const [isLookingAtEachOther, setIsLookingAtEachOther] = useState(false);
+	// 维护紫色角色的偷看动画状态。
 	const [isPurplePeeking, setIsPurplePeeking] = useState(false);
+	// 读取紫色角色当前是否正在眨眼。
 	const isPurpleBlinking = useBlinking();
+	// 读取黑色角色当前是否正在眨眼。
 	const isBlackBlinking = useBlinking();
+	// 判断用户是否正在编辑登录字段。
 	const isTyping =
 		activeField === "username" || activeField === "password" || activeField === "phone" || activeField === "captcha";
 
-	useEffect(() => {
-		if (!isTyping) {
-			setIsLookingAtEachOther(false);
-			return;
-		}
+	useEffect(
+		/* 安排延迟状态更新，并在依赖变化时清理定时器。 */ () => {
+			if (!isTyping) {
+				setIsLookingAtEachOther(false);
+				return;
+			}
 
-		setIsLookingAtEachOther(true);
-		const timer = window.setTimeout(() => {
-			setIsLookingAtEachOther(false);
-		}, 800);
+			setIsLookingAtEachOther(true);
+			// 记录当前定时器，便于副作用清理。
+			const timer = window.setTimeout(
+				/* 延迟执行角色动画或状态更新。 */ () => {
+					setIsLookingAtEachOther(false);
+				},
+				800
+			);
 
-		return () => window.clearTimeout(timer);
-	}, [activeField, isTyping]);
+			return /* 在副作用清理阶段取消定时器。 */ () => window.clearTimeout(timer);
+		},
+		[activeField, isTyping]
+	);
 
-	useEffect(() => {
-		if (!(hasPassword && passwordVisible)) {
-			setIsPurplePeeking(false);
-			return;
-		}
+	useEffect(
+		/* 安排延迟状态更新，并在依赖变化时清理定时器。 */ () => {
+			if (!(hasPassword && passwordVisible)) {
+				setIsPurplePeeking(false);
+				return;
+			}
 
-		let intervalId: number | undefined;
-		let peekTimer: number | undefined;
+			// 记录轮询定时器，便于副作用清理。
+			let intervalId: number | undefined;
+			// 记录角色偷看动画定时器，便于副作用清理。
+			let peekTimer: number | undefined;
 
-		const schedulePeek = () => {
-			intervalId = window.setTimeout(() => {
-				setIsPurplePeeking(true);
-				peekTimer = window.setTimeout(() => {
-					setIsPurplePeeking(false);
-					schedulePeek();
-				}, 800);
-			}, Math.random() * 3000 + 2000);
-		};
+			/** 安排密码可见状态下的角色偷看动画。 */
+			const schedulePeek = () => {
+				intervalId = window.setTimeout(
+					/* 延迟执行角色动画或状态更新。 */ () => {
+						setIsPurplePeeking(true);
+						peekTimer = window.setTimeout(
+							/* 延迟执行角色动画或状态更新。 */ () => {
+								setIsPurplePeeking(false);
+								schedulePeek();
+							},
+							800
+						);
+					},
+					Math.random() * 3000 + 2000
+				);
+			};
 
-		schedulePeek();
+			schedulePeek();
 
-		return () => {
-			if (intervalId) window.clearTimeout(intervalId);
-			if (peekTimer) window.clearTimeout(peekTimer);
-		};
-	}, [hasPassword, passwordVisible]);
+			return /* 在副作用清理阶段取消定时器。 */ () => {
+				if (intervalId) window.clearTimeout(intervalId);
+				if (peekTimer) window.clearTimeout(peekTimer);
+			};
+		},
+		[hasPassword, passwordVisible]
+	);
 
+	/** 根据指针位置计算角色面部倾斜和视线状态。 */
 	const getFaceState = (ref: RefObject<HTMLDivElement | null>) => {
 		if (!ref.current) return { faceX: 0, faceY: 0, bodySkew: 0 };
 
+		// 读取元素视口边界以计算指针偏移。
 		const rect = ref.current.getBoundingClientRect();
+		// 计算目标元素中心的横坐标。
 		const centerX = rect.left + rect.width / 2;
+		// 计算目标元素中心的纵坐标。
 		const centerY = rect.top + rect.height / 3;
+		// 计算指针与元素中心的横向距离。
 		const deltaX = cursor.x - centerX;
+		// 计算指针与元素中心的纵向距离。
 		const deltaY = cursor.y - centerY;
 
 		return {
@@ -230,13 +312,19 @@ const LoginShowcase = ({ activeField = null, passwordVisible = false, hasPasswor
 		};
 	};
 
+	// 计算紫色角色的视线与倾斜状态。
 	const purple = getFaceState(purpleRef);
+	// 计算黑色角色的视线与倾斜状态。
 	const black = getFaceState(blackRef);
+	// 计算黄色角色的视线与倾斜状态。
 	const yellow = getFaceState(yellowRef);
+	// 计算橙色角色的视线与倾斜状态。
 	const orange = getFaceState(orangeRef);
 
+	// 渲染 `LoginShowcase` 的 JSX 模板。
 	return (
 		<div className="login-showcase" aria-hidden="true">
+			{/* 登录页品牌定位与产品说明。 */}
 			<div className="showcase-copy">
 				<h2>
 					数字农业
@@ -269,19 +357,23 @@ const LoginShowcase = ({ activeField = null, passwordVisible = false, hasPasswor
 				<span className="showcase-network__core" />
 			</div>
 
+			{/* 农业生产状态快捷卡片。 */}
 			<div className="showcase-cards">
-				{statusCards.map(card => (
-					<div className="showcase-card" key={card.label}>
-						<div className="showcase-card__icon">
-							<StatusCardIcon className="showcase-card__icon-svg" name={card.icon} />
+				{statusCards.map(
+					/* 根据当前集合项生成对应的模板或数据。 */ card => (
+						<div className="showcase-card" key={card.label}>
+							<div className="showcase-card__icon">
+								<StatusCardIcon className="showcase-card__icon-svg" name={card.icon} />
+							</div>
+							<div className="showcase-card__content">
+								<span>{card.label}</span>
+							</div>
 						</div>
-						<div className="showcase-card__content">
-							<span>{card.label}</span>
-						</div>
-					</div>
-				))}
+					)
+				)}
 			</div>
 
+			{/* 根据表单焦点、输入和密码可见状态驱动角色动画。 */}
 			<div className="animated-login-illustration">
 				<div className="character-stage">
 					<div

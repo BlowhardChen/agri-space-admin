@@ -7,6 +7,11 @@ export const setToken = (token: string) => ({
 	token
 });
 
+// * resetSession
+export const resetSession = () => ({
+	type: types.RESET_SESSION
+});
+
 // * setAssemblySize
 export const setAssemblySize = (assemblySize: string) => ({
 	type: types.SET_ASSEMBLY_SIZE,

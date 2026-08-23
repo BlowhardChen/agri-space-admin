@@ -21,7 +21,8 @@ interface MenuProps {
 }
 // * redux-thunk
 export const getMenuListActionThunk = () => {
-	return async (dispatch: Dispatch<MenuProps>) => {
+	return /* 请求菜单数据并派发到 Redux。 */ async (dispatch: Dispatch<MenuProps>) => {
+		// 保存当前异步请求返回的业务响应。
 		const res = await getMenuList();
 		dispatch({
 			type: types.SET_MENU_LIST,
@@ -32,6 +33,7 @@ export const getMenuListActionThunk = () => {
 
 // * redux-promise《async/await》
 export const getMenuListAction = async (): Promise<MenuProps> => {
+	// 保存当前异步请求返回的业务响应。
 	const res = await getMenuList();
 	return {
 		type: types.SET_MENU_LIST,
@@ -41,10 +43,12 @@ export const getMenuListAction = async (): Promise<MenuProps> => {
 
 // * redux-promise《.then/.catch》
 export const getMenuListActionPromise = (): Promise<MenuProps> => {
-	return getMenuList().then(res => {
-		return {
-			type: types.SET_MENU_LIST,
-			menuList: res.data ? res.data : []
-		};
-	});
+	return getMenuList().then(
+		/* 处理异步操作成功后的结果。 */ res => {
+			return {
+				type: types.SET_MENU_LIST,
+				menuList: res.data ? res.data : []
+			};
+		}
+	);
 };

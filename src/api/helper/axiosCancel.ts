@@ -17,15 +17,18 @@ export class AxiosCanceler {
 	addPending(config: AxiosRequestConfig) {
 		// * 在请求开始前，对之前的请求做检查取消操作
 		this.removePending(config);
+		// 组合请求方法与地址作为取消请求的唯一键。
 		const url = getPendingUrl(config);
 		config.cancelToken =
 			config.cancelToken ||
-			new axios.CancelToken(cancel => {
-				if (!pendingMap.has(url)) {
-					// 如果 pending 中不存在当前请求，则添加进去
-					pendingMap.set(url, cancel);
+			new axios.CancelToken(
+				/* 缓存当前请求的取消函数，用于拦截重复请求。 */ cancel => {
+					if (!pendingMap.has(url)) {
+						// 如果 pending 中不存在当前请求，则添加进去
+						pendingMap.set(url, cancel);
+					}
 				}
-			});
+			);
 	}
 
 	/**
@@ -33,6 +36,7 @@ export class AxiosCanceler {
 	 * @param {Object} config
 	 */
 	removePending(config: AxiosRequestConfig) {
+		// 组合请求方法与地址作为取消请求的唯一键。
 		const url = getPendingUrl(config);
 
 		if (pendingMap.has(url)) {
@@ -47,9 +51,11 @@ export class AxiosCanceler {
 	 * @description: 清空所有pending
 	 */
 	removeAllPending() {
-		pendingMap.forEach(cancel => {
-			cancel && isFunction(cancel) && cancel();
-		});
+		pendingMap.forEach(
+			/* 遍历当前集合并处理每一项。 */ cancel => {
+				cancel && isFunction(cancel) && cancel();
+			}
+		);
 		pendingMap.clear();
 	}
 

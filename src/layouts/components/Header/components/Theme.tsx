@@ -14,6 +14,7 @@ import { updateCollapse } from "@/redux/modules/menu/action";
 import SwitchDark from "@/components/SwitchDark";
 import type { LayoutMode } from "@/layouts/utils";
 
+/** 维护主题抽屉可选择的布局模式。 */
 const layoutOptions: { key: LayoutMode; label: string }[] = [
 	{ key: "vertical", label: "纵向" },
 	{ key: "classic", label: "经典" },
@@ -21,6 +22,7 @@ const layoutOptions: { key: LayoutMode; label: string }[] = [
 	{ key: "columns", label: "多栏" }
 ];
 
+/** 维护主题抽屉可选择的预设主色。 */
 const themeColorOptions = [
 	{ color: "#379446", label: "农域绿" },
 	{ color: "#1890ff", label: "拂晓蓝" },
@@ -32,81 +34,106 @@ const themeColorOptions = [
 	{ color: "#2f54eb", label: "极客蓝" }
 ];
 
+/** 校验并规范化主题色输入值。 */
 const normalizeColorValue = (color?: string) => {
 	if (color && /^#[0-9a-fA-F]{6}$/.test(color)) return color;
 	return themeColorOptions[0].color;
 };
 
+/** 渲染布局、主题色和界面显示配置抽屉。 */
 const Theme = (props: any) => {
+	// 维护当前浮层显示状态。
 	const [visible, setVisible] = useState<boolean>(false);
+	// 读取主题更新和侧栏折叠操作。
 	const { setThemeConfig, updateCollapse } = props;
+	// 读取侧栏折叠状态。
 	const { isCollapse } = props.menu;
+	// 读取当前全局主题配置。
 	const { themeConfig } = props.global;
+	// 读取灰度模式、面包屑、标签页和页脚显示配置。
 	const { weakOrGray, breadcrumb, tabs, footer } = themeConfig;
+	// 读取当前启用的布局模式。
 	const currentLayout = themeConfig.layout ?? "vertical";
+	// 保存当前有效的六位主题主色。
 	const currentPrimary = normalizeColorValue(themeConfig.primary);
 
+	/** 切换灰度或弱色显示模式。 */
 	const setWeakOrGray = (checked: boolean, theme: string) => {
 		if (checked) return setThemeConfig({ ...themeConfig, weakOrGray: theme });
 		setThemeConfig({ ...themeConfig, weakOrGray: "" });
 	};
 
+	/** 更新指定界面区域的隐藏配置。 */
 	const onChange = (checked: boolean, keyName: string) => {
 		return setThemeConfig({ ...themeConfig, [keyName]: !checked });
 	};
 
+	/** 校验并应用用户输入的主题主色。 */
 	const handlePrimaryColorChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setThemeConfig({ ...themeConfig, primary: event.target.value });
 	};
 
+	// 渲染 `Theme` 的 JSX 模板。
 	return (
 		<>
 			<i
 				className="icon-style iconfont icon-zhuti"
-				onClick={() => {
-					setVisible(true);
-				}}
+				onClick={
+					/* 打开主题与布局配置抽屉。 */ () => {
+						setVisible(true);
+					}
+				}
 			></i>
 			<Drawer
 				title="布局设置"
 				closable={true}
 				closeIcon={<CloseOutlined />}
-				onClose={() => {
-					setVisible(false);
-				}}
+				onClose={
+					/* 关闭主题与布局配置抽屉。 */ () => {
+						setVisible(false);
+					}
+				}
 				visible={visible}
 				width={320}
 				mask={false}
 				className={`theme-drawer ${themeConfig.isDark ? "theme-drawer--dark" : "theme-drawer--light"}`}
 			>
+				{/* 选择后台整体布局结构。 */}
 				<Divider className="divider">
 					<AppstoreOutlined />
 					布局样式
 				</Divider>
 				<div className="layout-type-list">
-					{layoutOptions.map(item => {
-						const isActive = currentLayout === item.key;
-						return (
-							<div
-								key={item.key}
-								className={`layout-type-card layout-type-card--${item.key} ${isActive ? "is-active" : ""}`.trim()}
-								onClick={() => {
-									setThemeConfig({ ...themeConfig, layout: item.key });
-								}}
-							>
-								<div className="layout-type-card__canvas">
-									<span className="layout-type-card__header"></span>
-									<span className="layout-type-card__aside"></span>
-									<span className="layout-type-card__aside-light"></span>
-									<span className="layout-type-card__content"></span>
+					{layoutOptions.map(
+						/* 根据当前集合项生成对应的模板或数据。 */ item => {
+							// 判断当前配置项是否处于选中状态。
+							const isActive = currentLayout === item.key;
+							// 渲染当前主题配置项。
+							return (
+								<div
+									key={item.key}
+									className={`layout-type-card layout-type-card--${item.key} ${isActive ? "is-active" : ""}`.trim()}
+									onClick={
+										/* 应用用户选择的主题配置。 */ () => {
+											setThemeConfig({ ...themeConfig, layout: item.key });
+										}
+									}
+								>
+									<div className="layout-type-card__canvas">
+										<span className="layout-type-card__header"></span>
+										<span className="layout-type-card__aside"></span>
+										<span className="layout-type-card__aside-light"></span>
+										<span className="layout-type-card__content"></span>
+									</div>
+									<CheckCircleFilled className="layout-type-card__check" />
+									<span className="layout-type-card__label">{item.label}</span>
 								</div>
-								<CheckCircleFilled className="layout-type-card__check" />
-								<span className="layout-type-card__label">{item.label}</span>
-							</div>
-						);
-					})}
+							);
+						}
+					)}
 				</div>
 
+				{/* 选择预设主色、自定义主色和明暗视觉模式。 */}
 				<Divider className="divider">
 					<FireOutlined />
 					全局主题
@@ -114,22 +141,26 @@ const Theme = (props: any) => {
 				<div className="theme-color-panel">
 					<div className="theme-color-panel__title">主题色</div>
 					<div className="theme-color-list">
-						{themeColorOptions.map(item => {
-							const isActive = currentPrimary.toLowerCase() === item.color.toLowerCase();
-							return (
-								<button
-									key={item.color}
-									type="button"
-									className={`theme-color-item ${isActive ? "is-active" : ""}`.trim()}
-									style={{ backgroundColor: item.color }}
-									title={item.label}
-									aria-label={`切换主题色为${item.label}`}
-									onClick={() => setThemeConfig({ ...themeConfig, primary: item.color })}
-								>
-									{isActive && <CheckOutlined />}
-								</button>
-							);
-						})}
+						{themeColorOptions.map(
+							/* 根据当前集合项生成对应的模板或数据。 */ item => {
+								// 判断当前配置项是否处于选中状态。
+								const isActive = currentPrimary.toLowerCase() === item.color.toLowerCase();
+								// 渲染当前主题配置项。
+								return (
+									<button
+										key={item.color}
+										type="button"
+										className={`theme-color-item ${isActive ? "is-active" : ""}`.trim()}
+										style={{ backgroundColor: item.color }}
+										title={item.label}
+										aria-label={`切换主题色为${item.label}`}
+										onClick={/* 应用用户选择的主题配置。 */ () => setThemeConfig({ ...themeConfig, primary: item.color })}
+									>
+										{isActive && <CheckOutlined />}
+									</button>
+								);
+							}
+						)}
 					</div>
 					<div className="theme-color-custom">
 						<span>自定义</span>
@@ -148,21 +179,26 @@ const Theme = (props: any) => {
 					<span>灰色模式</span>
 					<Switch
 						checked={weakOrGray === "gray"}
-						onChange={e => {
-							setWeakOrGray(e, "gray");
-						}}
+						onChange={
+							/* 切换全局灰度显示模式。 */ e => {
+								setWeakOrGray(e, "gray");
+							}
+						}
 					/>
 				</div>
 				<div className="theme-item">
 					<span>色弱模式</span>
 					<Switch
 						checked={weakOrGray === "weak"}
-						onChange={e => {
-							setWeakOrGray(e, "weak");
-						}}
+						onChange={
+							/* 切换全局色弱显示模式。 */ e => {
+								setWeakOrGray(e, "weak");
+							}
+						}
 					/>
 				</div>
 				<br />
+				{/* 控制菜单、面包屑、标签栏和页脚的显示状态。 */}
 				<Divider className="divider">
 					<SettingOutlined />
 					界面设置
@@ -171,36 +207,44 @@ const Theme = (props: any) => {
 					<span>菜单折叠</span>
 					<Switch
 						checked={isCollapse}
-						onChange={e => {
-							updateCollapse(e);
-						}}
+						onChange={
+							/* 切换侧边菜单折叠状态。 */ e => {
+								updateCollapse(e);
+							}
+						}
 					/>
 				</div>
 				<div className="theme-item">
 					<span>面包屑导航</span>
 					<Switch
 						checked={!breadcrumb}
-						onChange={e => {
-							onChange(e, "breadcrumb");
-						}}
+						onChange={
+							/* 切换面包屑导航显示状态。 */ e => {
+								onChange(e, "breadcrumb");
+							}
+						}
 					/>
 				</div>
 				<div className="theme-item">
 					<span>标签栏</span>
 					<Switch
 						checked={!tabs}
-						onChange={e => {
-							onChange(e, "tabs");
-						}}
+						onChange={
+							/* 切换页面标签栏显示状态。 */ e => {
+								onChange(e, "tabs");
+							}
+						}
 					/>
 				</div>
 				<div className="theme-item">
 					<span>页脚</span>
 					<Switch
 						checked={!footer}
-						onChange={e => {
-							onChange(e, "footer");
-						}}
+						onChange={
+							/* 切换布局页脚显示状态。 */ e => {
+								onChange(e, "footer");
+							}
+						}
 					/>
 				</div>
 			</Drawer>
@@ -208,6 +252,8 @@ const Theme = (props: any) => {
 	);
 };
 
+/** 将 Redux 全局配置映射为组件属性。 */
 const mapStateToProps = (state: any) => state;
+/** 将全局配置更新操作映射为组件属性。 */
 const mapDispatchToProps = { setThemeConfig, updateCollapse };
 export default connect(mapStateToProps, mapDispatchToProps)(Theme);

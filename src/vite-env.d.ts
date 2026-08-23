@@ -1,13 +1,15 @@
 /// <reference types="vite/client" />
 
-// 声明 moment 本地化文件
-declare module "moment/dist/locale/zh-cn" {
-	const content: any;
-	export default content;
+interface ImportMetaEnv {
+	readonly VITE_USE_MOCK_AUTH: string;
 }
 
-// 声明 virtual:svg-icons-register
-declare module "virtual:svg-icons-register" {
+interface ImportMeta {
+	readonly env: ImportMetaEnv;
+}
+
+// 声明 moment 本地化文件
+declare module "moment/dist/locale/zh-cn" {
 	const content: any;
 	export default content;
 }

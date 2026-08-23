@@ -1,6 +1,6 @@
 // * 请求响应参数(不包含data)
 export interface Result {
-	code: string;
+	code: string | number;
 	msg: string;
 }
 
@@ -37,7 +37,10 @@ export namespace Login {
 	export interface ResLogin {
 		access_token: string;
 	}
+	export interface ResRegister {
+		username: string;
+	}
 	export interface ResAuthButtons {
-		[propName: string]: any;
+		[moduleName: string]: Record<string, boolean>;
 	}
 }

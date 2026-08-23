@@ -24,6 +24,7 @@ const persistConfig = {
 	key: "redux-state",
 	storage: storage
 };
+/** 配置 Redux 持久化键和存储白名单。 */
 const persistReducerConfig = persistReducer(persistConfig, reducer);
 
 // 开启 redux-devtools

@@ -6,6 +6,7 @@ interface StatusCardIconProps extends SVGProps<SVGSVGElement> {
 	name: StatusCardIconName;
 }
 
+/** 渲染农作物状态卡片图标。 */
 const CropIcon = (props: SVGProps<SVGSVGElement>) => (
 	<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path
@@ -22,6 +23,7 @@ const CropIcon = (props: SVGProps<SVGSVGElement>) => (
 	</svg>
 );
 
+/** 渲染湿度状态卡片图标。 */
 const HumidityIcon = (props: SVGProps<SVGSVGElement>) => (
 	<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path
@@ -35,6 +37,7 @@ const HumidityIcon = (props: SVGProps<SVGSVGElement>) => (
 	</svg>
 );
 
+/** 渲染灌溉状态卡片图标。 */
 const IrrigationIcon = (props: SVGProps<SVGSVGElement>) => (
 	<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path
@@ -52,6 +55,7 @@ const IrrigationIcon = (props: SVGProps<SVGSVGElement>) => (
 	</svg>
 );
 
+/** 渲染产量状态卡片图标。 */
 const YieldIcon = (props: SVGProps<SVGSVGElement>) => (
 	<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
 		<path d="M6 6.8v18.4h19.4" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -66,6 +70,7 @@ const YieldIcon = (props: SVGProps<SVGSVGElement>) => (
 	</svg>
 );
 
+/** 建立状态类型与展示图标的映射。 */
 const iconMap: Record<StatusCardIconName, (props: SVGProps<SVGSVGElement>) => JSX.Element> = {
 	crop: CropIcon,
 	humidity: HumidityIcon,
@@ -73,8 +78,11 @@ const iconMap: Record<StatusCardIconName, (props: SVGProps<SVGSVGElement>) => JS
 	yield: YieldIcon
 };
 
+/** 根据状态类型选择并渲染对应图标。 */
 const StatusCardIcon = ({ name, ...props }: StatusCardIconProps) => {
+	// 保存当前状态类型对应的图标组件。
 	const Icon = iconMap[name];
+	// 渲染 `StatusCardIcon` 的 JSX 模板。
 	return <Icon aria-hidden="true" focusable="false" {...props} />;
 };
 

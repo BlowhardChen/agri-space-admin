@@ -8,9 +8,13 @@ import Logo from "./components/Logo";
 import { findMenuPathChain, getAntdMenuList } from "@/layouts/utils";
 import "./index.less";
 
+/** 渲染权限菜单并维护选中与展开状态。 */
 const LayoutMenu = (props: any) => {
+	// 读取当前路由路径。
 	const { pathname } = useLocation();
+	// 获取 React Router 路由跳转函数。
 	const navigate = useNavigate();
+	// 读取菜单渲染配置、状态和可选点击回调。
 	const {
 		isCollapse,
 		menuList: storeMenuList,
@@ -23,34 +27,47 @@ const LayoutMenu = (props: any) => {
 		selectedKeys: customSelectedKeys,
 		onMenuClick
 	} = props;
+	// 保存当前布局实际展示的菜单列表。
 	const menuList = props.menuData ?? storeMenuList;
+	// 维护当前菜单选中项。
 	const [selectedKeys, setSelectedKeys] = useState<string[]>(customSelectedKeys ?? [pathname]);
+	// 维护侧边菜单展开项。
 	const [openKeys, setOpenKeys] = useState<string[]>([]);
 
-	useEffect(() => {
-		setSelectedKeys(customSelectedKeys ?? [pathname]);
-		if (mode !== "inline") return;
-		if (collapsed) return setOpenKeys([]);
-		const currentMenuPath = findMenuPathChain(menuList, pathname);
-		setOpenKeys(currentMenuPath.slice(0, -1).map(item => item.path));
-	}, [pathname, collapsed, customSelectedKeys, menuList, mode]);
+	useEffect(
+		/* 在依赖变化时同步组件副作用，并在必要时执行清理。 */ () => {
+			setSelectedKeys(customSelectedKeys ?? [pathname]);
+			if (mode !== "inline") return;
+			if (collapsed) return setOpenKeys([]);
+			// 定位与当前路由匹配的菜单路径。
+			const currentMenuPath = findMenuPathChain(menuList, pathname);
+			setOpenKeys(currentMenuPath.slice(0, -1).map(/* 根据当前集合项生成对应的模板或数据。 */ item => item.path));
+		},
+		[pathname, collapsed, customSelectedKeys, menuList, mode]
+	);
 
+	/** 根据用户操作维护菜单展开项。 */
 	const onOpenChange = (keys: string[]) => {
 		if (keys.length === 0 || keys.length === 1) return setOpenKeys(keys);
+		// 读取本次菜单操作新增的展开项。
 		const latestOpenKey = keys[keys.length - 1];
 		if (latestOpenKey.includes(keys[0])) return setOpenKeys(keys);
 		setOpenKeys([latestOpenKey]);
 	};
 
-	const menuItems = useMemo(() => getAntdMenuList(menuList), [menuList]);
+	// 将权限菜单转换为 Ant Design 菜单项。
+	const menuItems = useMemo(/* 根据依赖重新计算并缓存派生数据。 */ () => getAntdMenuList(menuList), [menuList]);
 
+	/** 根据菜单路径完成页面跳转。 */
 	const clickMenu: MenuProps["onClick"] = ({ key }: { key: string }) => {
+		// 查找与当前路径匹配的路由配置。
 		const route = searchRoute(key, menuList);
 		if (route.isLink) return window.open(route.isLink, "_blank");
 		if (onMenuClick) return onMenuClick(route.path ? route : { path: key, title: key });
 		navigate(key);
 	};
 
+	// 渲染 `LayoutMenu` 的 JSX 模板。
 	return (
 		<div className={`menu ${mode === "horizontal" ? "menu--horizontal" : ""} ${className}`.trim()}>
 			<Spin spinning={loading} tip="Loading...">
@@ -71,5 +88,6 @@ const LayoutMenu = (props: any) => {
 	);
 };
 
+/** 将 Redux 全局配置映射为组件属性。 */
 const mapStateToProps = (state: any) => state.menu;
 export default connect(mapStateToProps)(LayoutMenu) as any;

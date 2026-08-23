@@ -1,5 +1,6 @@
 // @see: http://eslint.cn
 
+/** 配置项目 TypeScript、React Hooks 和 Prettier 的 ESLint 校验规则。 */
 module.exports = {
 	settings: {
 		react: {

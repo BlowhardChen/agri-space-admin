@@ -1,3 +1,4 @@
+/** function toString() { [native code] } */
 const toString = Object.prototype.toString;
 
 /**
@@ -21,6 +22,7 @@ export const isDef = <T = unknown>(val?: T): val is T => {
 	return typeof val !== "undefined";
 };
 
+/** 判断目标值是否为 undefined。 */
 export const isUnDef = <T = unknown>(val?: T): val is T => {
 	return !isDef(val);
 };
@@ -94,10 +96,12 @@ export const isWindow = (val: any): val is Window => {
 	return typeof window !== "undefined" && is(val, "Window");
 };
 
+/** 判断目标值是否为 DOM 元素。 */
 export const isElement = (val: unknown): val is Element => {
 	return isObject(val) && !!val.tagName;
 };
 
+/** 标记代码是否运行在服务端环境。 */
 export const isServer = typeof window === "undefined";
 
 // 是否为图片节点
@@ -105,14 +109,17 @@ export function isImageDom(o: Element) {
 	return o && ["IMAGE", "IMG"].includes(o.tagName);
 }
 
+/** 判断目标值是否为 null。 */
 export function isNull(val: unknown): val is null {
 	return val === null;
 }
 
+/** 判断目标值是否同时满足空值条件。 */
 export function isNullAndUnDef(val: unknown): val is null | undefined {
 	return isUnDef(val) && isNull(val);
 }
 
+/** 判断目标值是否为 null 或 undefined。 */
 export function isNullOrUnDef(val: unknown): val is null | undefined {
 	return isUnDef(val) || isNull(val);
 }

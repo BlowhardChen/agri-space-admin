@@ -6,10 +6,12 @@ import { RouteObject } from "@/routers/interface";
  * @return string
  */
 export const localGet = (key: string) => {
+	// 读取目标类型在 Object 原型中的类型标记。
 	const value = window.localStorage.getItem(key);
 	try {
 		return JSON.parse(window.localStorage.getItem(key) as string);
 	} catch (error) {
+		// error 表示本地存储内容无法解析为 JSON 的异常。
 		return value;
 	}
 };
@@ -46,7 +48,9 @@ export const localClear = () => {
  * @return string
  */
 export const getBrowserLang = () => {
+	// 读取浏览器首选语言。
 	let browserLang = navigator.language ? navigator.language : navigator.browserLanguage;
+	// 保存应用支持的浏览器语言值。
 	let defaultBrowserLang = "";
 	if (browserLang.toLowerCase() === "cn" || browserLang.toLowerCase() === "zh" || browserLang.toLowerCase() === "zh-cn") {
 		defaultBrowserLang = "zh";
@@ -62,9 +66,13 @@ export const getBrowserLang = () => {
  * @returns array
  */
 export const getOpenKeys = (path: string) => {
+	// 保存转换命名格式后的字符串。
 	let newStr: string = "";
+	// 保存完成去重后的数组。
 	let newArr: any[] = [];
-	let arr = path.split("/").map(i => "/" + i);
+	// 保存拆分后的路径片段。
+	let arr = path.split("/").map(/* 根据当前集合项生成对应的模板或数据。 */ i => "/" + i);
+	// i 表示当前待转换路径片段的索引。
 	for (let i = 1; i < arr.length - 1; i++) {
 		newStr += arr[i];
 		newArr.push(newStr);
@@ -79,10 +87,13 @@ export const getOpenKeys = (path: string) => {
  * @returns array
  */
 export const searchRoute = (path: string, routes: RouteObject[] = []): RouteObject => {
+	// 保存当前工具函数计算后的结果。
 	let result: RouteObject = {};
+	// item 表示当前参与路径匹配的路由节点。
 	for (let item of routes) {
 		if (item.path === path) return item;
 		if (item.children) {
+			// 保存当前异步请求返回的业务响应。
 			const res = searchRoute(path, item.children);
 			if (Object.keys(res).length) result = res;
 		}
@@ -97,8 +108,10 @@ export const searchRoute = (path: string, routes: RouteObject[] = []): RouteObje
  * @returns array
  */
 export const getBreadcrumbList = (path: string, menuList: Menu.MenuOptions[]) => {
+	// 记录递归遍历菜单时的当前路径。
 	let tempPath: any[] = [];
 	try {
+		/** 递归查找菜单节点对应的父级路径。 */
 		const getNodePath = (node: Menu.MenuOptions) => {
 			tempPath.push(node);
 			// 找到符合条件的节点，通过throw终止掉递归
@@ -106,6 +119,7 @@ export const getBreadcrumbList = (path: string, menuList: Menu.MenuOptions[]) =>
 				throw new Error("GOT IT!");
 			}
 			if (node.children && node.children.length > 0) {
+				// i 表示当前递归检查的子菜单索引。
 				for (let i = 0; i < node.children.length; i++) {
 					getNodePath(node.children[i]);
 				}
@@ -116,11 +130,13 @@ export const getBreadcrumbList = (path: string, menuList: Menu.MenuOptions[]) =>
 				tempPath.pop();
 			}
 		};
+		// i 表示当前开始查找路径的根菜单索引。
 		for (let i = 0; i < menuList.length; i++) {
 			getNodePath(menuList[i]);
 		}
 	} catch (e) {
-		return tempPath.map(item => item.title);
+		// e 表示找到目标菜单后用于提前结束递归的内部信号。
+		return tempPath.map(/* 根据当前集合项生成对应的模板或数据。 */ item => item.title);
 	}
 };
 
@@ -130,13 +146,15 @@ export const getBreadcrumbList = (path: string, menuList: Menu.MenuOptions[]) =>
  * @returns object
  */
 export const findAllBreadcrumb = (menuList: Menu.MenuOptions[]): { [key: string]: any } => {
+	// 创建更新面包屑列表的 Redux 派发函数。
 	let handleBreadcrumbList: any = {};
+	/** 递归遍历菜单树并收集目标节点。 */
 	const loop = (menuItem: Menu.MenuOptions) => {
 		// 下面判断代码解释 *** !item?.children?.length   ==>   (item.children && item.children.length > 0)
-		if (menuItem?.children?.length) menuItem.children.forEach(item => loop(item));
+		if (menuItem?.children?.length) menuItem.children.forEach(/* 遍历当前集合并处理每一项。 */ item => loop(item));
 		else handleBreadcrumbList[menuItem.path] = getBreadcrumbList(menuItem.path, menuList);
 	};
-	menuList.forEach(item => loop(item));
+	menuList.forEach(/* 遍历当前集合并处理每一项。 */ item => loop(item));
 	return handleBreadcrumbList;
 };
 
@@ -147,10 +165,12 @@ export const findAllBreadcrumb = (menuList: Menu.MenuOptions[]): { [key: string]
  * @return array
  */
 export function handleRouter(routerList: Menu.MenuOptions[], newArr: string[] = []) {
-	routerList.forEach((item: Menu.MenuOptions) => {
-		typeof item === "object" && item.path && newArr.push(item.path);
-		item.children && item.children.length && handleRouter(item.children, newArr);
-	});
+	routerList.forEach(
+		/* 遍历当前集合并处理每一项。 */ (item: Menu.MenuOptions) => {
+			typeof item === "object" && item.path && newArr.push(item.path);
+			item.children && item.children.length && handleRouter(item.children, newArr);
+		}
+	);
 	return newArr;
 }
 
@@ -171,12 +191,15 @@ export const isType = (val: any) => {
  * @return object
  */
 export const deepCopy = <T>(obj: any): T => {
+	// 保存按目标属性完成去重的映射。
 	let newObj: any;
 	try {
 		newObj = obj.push ? [] : {};
 	} catch (error) {
+		// error 表示源数据不支持数组方式初始化副本的异常。
 		newObj = {};
 	}
+	// attr 表示当前复制的对象属性名。
 	for (let attr in obj) {
 		if (typeof obj[attr] === "object") {
 			newObj[attr] = deepCopy(obj[attr]);
@@ -194,6 +217,7 @@ export const deepCopy = <T>(obj: any): T => {
  * @return number
  */
 export function randomNum(min: number, max: number): number {
+	// 保存格式化后的两位颜色分量。
 	let num = Math.floor(Math.random() * (min - max) + max);
 	return num;
 }

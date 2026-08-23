@@ -2,11 +2,11 @@
 
 ### 介绍 📖
 
-🚀🚀🚀 Agri Space Admin，基于 React18、React-Router v6、React-Hooks、Redux TypeScript、Vite2、Ant-Design 开源的一套后台管理框架。
+🚀🚀🚀 Agri Space Admin，基于 React 18、React Router v6、React Hooks、Redux、TypeScript、Vite、Ant Design 的后台管理框架。
 
 ### 三、🔨🔨🔨 项目功能
 
-- 🚀 采用最新技术找开发：React18、React-Router v6、React-Hooks、TypeScript、Vite2
+- 🚀 采用 React 18、React Router v6、React Hooks、TypeScript、Vite 开发
 - 🚀 采用 Vite 作为项目开发、打包工具（配置了 Gzip 打包、跨域代理、打包预览工具…）
 - 🚀 整个项目集成了 TypeScript
 - 🚀 使用 redux 做状态管理，集成 immer、react-redux、redux-persist 开发
@@ -22,17 +22,15 @@
 - **Clone：**
 
 ```text
-# Gitee
-git clone https://gitee.com/HalseySpicy/Hooks-Admin.git
 # GitHub
-git clone https://github.com/HalseySpicy/Hooks-Admin.git
+git clone https://github.com/BlowhardChen/agri-space-admin
 ```
 
 - **Install：**
 
 ```text
 npm install
-cnpm install
+yarn install
 
 # npm install 安装失败，请升级 nodejs 到 16 以上，或尝试使用以下命令：
 npm install --registry=https://registry.npm.taobao.org
@@ -61,15 +59,30 @@ npm run build:pro
 - **Lint：**
 
 ```text
-# eslint 检测代码
+# eslint 检测代码（不会自动修改文件）
 npm run lint:eslint
 
-# prettier 格式化代码
+# prettier 检测代码格式（不会自动修改文件）
 npm run lint:prettier
 
-# stylelint 格式化样式
-lint:stylelint
+# stylelint 检测样式（不会自动修改文件）
+npm run lint:stylelint
 ```
+
+### 认证模式
+
+项目默认设置 `VITE_USE_MOCK_AUTH=true`，使用浏览器本地 Mock 用户、菜单和按钮权限，默认账号为 `admin / 123456`。
+
+接入真实后端时，在对应环境文件中设置 `VITE_USE_MOCK_AUTH=false`。前端当前约定以下接口：
+
+```text
+POST /hooks/login
+POST /hooks/register
+GET  /hooks/auth/buttons
+GET  /hooks/menu/list
+```
+
+统一响应结构为 `{ code, msg, data }`，登录成功时 `data.access_token` 必须存在。
 
 - **commit：**
 

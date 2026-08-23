@@ -7,6 +7,7 @@ import { Spin } from "antd";
  * @returns element
  */
 const lazyLoad = (Comp: React.LazyExoticComponent<any>): React.ReactNode => {
+	// 渲染 `lazyLoad` 的 JSX 模板。
 	return (
 		<Suspense
 			fallback={

@@ -11,9 +11,12 @@ interface MainContentProps {
 	showCollapse?: boolean;
 }
 
+/** 渲染路由内容、标签页和页脚区域。 */
 const LayoutMainContent = ({ className = "", afterHeader, showCollapse = true }: MainContentProps) => {
+	// 读取 Ant Design 布局的内容区组件。
 	const { Content } = Layout;
 
+	// 渲染 `LayoutMainContent` 的 JSX 模板。
 	return (
 		<Layout className={className}>
 			<LayoutHeader showCollapse={showCollapse}></LayoutHeader>

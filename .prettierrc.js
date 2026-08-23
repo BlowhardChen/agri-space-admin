@@ -1,5 +1,6 @@
 // @see: https://www.prettier.cn
 
+/** 配置项目源码和文档统一使用的 Prettier 格式。 */
 module.exports = {
 	// 超过最大值换行
 	printWidth: 130,

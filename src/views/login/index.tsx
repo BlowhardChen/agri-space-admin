@@ -13,20 +13,31 @@ interface LoginProps {
 
 type FocusField = "username" | "password" | "phone" | "captcha" | null;
 
+/** 组合登录表单与品牌展示区域。 */
 const Login = ({ themeConfig }: LoginProps) => {
+	// 维护登录与注册面板模式。
 	const [panelMode, setPanelMode] = useState<LoginPanelMode>("login");
+	// 维护当前聚焦的登录字段。
 	const [activeField, setActiveField] = useState<FocusField>(null);
+	// 维护密码输入框的可见状态。
 	const [passwordVisible, setPasswordVisible] = useState(false);
+	// 维护当前密码字段是否已有内容。
 	const [hasPassword, setHasPassword] = useState(false);
+	// 判断当前是否启用深色主题。
 	const isDark = Boolean(themeConfig?.isDark);
+	// 判断登录面板当前是否处于注册模式。
 	const isRegisterMode = panelMode === "register";
 
-	useEffect(() => {
-		setActiveField(null);
-		setPasswordVisible(false);
-		setHasPassword(false);
-	}, [panelMode]);
+	useEffect(
+		/* 在依赖变化时同步组件副作用，并在必要时执行清理。 */ () => {
+			setActiveField(null);
+			setPasswordVisible(false);
+			setHasPassword(false);
+		},
+		[panelMode]
+	);
 
+	// 渲染 `Login` 的 JSX 模板。
 	return (
 		<div className={`login-container ${isDark ? "login-container--dark" : ""}`.trim()}>
 			<div className="login-box">
@@ -85,8 +96,8 @@ const Login = ({ themeConfig }: LoginProps) => {
 							<span>{isRegisterMode ? "已经有账号？" : "还没有账号？"}</span>
 							<button
 								type="button"
-								onMouseDown={event => event.preventDefault()}
-								onClick={() => setPanelMode(isRegisterMode ? "login" : "register")}
+								onMouseDown={/* 阻止按钮按下时触发表单默认行为。 */ event => event.preventDefault()}
+								onClick={/* 切换登录与注册面板。 */ () => setPanelMode(isRegisterMode ? "login" : "register")}
 							>
 								{isRegisterMode ? "返回登录" : "立即注册"}
 							</button>
@@ -98,6 +109,7 @@ const Login = ({ themeConfig }: LoginProps) => {
 	);
 };
 
+/** 将 Redux 全局配置映射为组件属性。 */
 const mapStateToProps = (state: any) => state.global;
 
 export default connect(mapStateToProps)(Login);

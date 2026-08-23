@@ -1,8 +1,11 @@
 import { ResultEnum } from "@/enums/httpEnum";
 import { localGet, localSet } from "@/utils/util";
 import { Login, ResultData } from "@/api/interface";
+import { AUTH_MENU_LIST } from "@/config/authMenu";
 
+/** 定义模拟用户列表的本地存储键。 */
 const MOCK_USERS_STORAGE_KEY = "agri-space-mock-users";
+/** 定义本地模拟访问令牌的固定前缀。 */
 const MOCK_TOKEN_PREFIX = "mock-token-";
 
 interface MockUser {
@@ -12,6 +15,7 @@ interface MockUser {
 	createdAt: string;
 }
 
+/** 提供本地模拟登录的初始用户列表。 */
 const DEFAULT_USERS: MockUser[] = [
 	{
 		username: "admin",
@@ -21,191 +25,20 @@ const DEFAULT_USERS: MockUser[] = [
 	}
 ];
 
-const FALLBACK_AUTH_BUTTONS: Login.ResAuthButtons = {
-	useHooks: {
-		add: true,
-		delete: true,
-		edit: true
-	}
-};
+/** 提供接口不可用时的按钮权限数据。 */
+const FALLBACK_AUTH_BUTTONS: Login.ResAuthButtons = {};
 
+/** 提供接口不可用时的农域菜单数据。 */
 const FALLBACK_MENU_LIST: Menu.MenuOptions[] = [
 	{
 		path: "/home/index",
 		title: "首页",
 		icon: "HomeOutlined"
 	},
-	{
-		path: "/dashboard",
-		title: "Dashboard",
-		icon: "DashboardOutlined",
-		children: [
-			{
-				path: "/dashboard/dataVisualize",
-				title: "数据可视化"
-			},
-			{
-				path: "/dashboard/embedded",
-				title: "内嵌页面"
-			}
-		]
-	},
-	{
-		path: "/form",
-		title: "表单 Form",
-		icon: "FormOutlined",
-		children: [
-			{
-				path: "/form/basicForm",
-				title: "基础 Form"
-			},
-			{
-				path: "/form/validateForm",
-				title: "校验 Form"
-			},
-			{
-				path: "/form/dynamicForm",
-				title: "动态 Form"
-			}
-		]
-	},
-	{
-		path: "/echarts",
-		title: "Echarts",
-		icon: "AreaChartOutlined",
-		children: [
-			{
-				path: "/echarts/waterChart",
-				title: "水型图"
-			},
-			{
-				path: "/echarts/columnChart",
-				title: "柱状图"
-			},
-			{
-				path: "/echarts/lineChart",
-				title: "折线图"
-			},
-			{
-				path: "/echarts/pieChart",
-				title: "饼图"
-			},
-			{
-				path: "/echarts/radarChart",
-				title: "雷达图"
-			},
-			{
-				path: "/echarts/nestedChart",
-				title: "嵌套环形图"
-			}
-		]
-	},
-	{
-		path: "/assembly",
-		title: "常用组件",
-		icon: "AppstoreOutlined",
-		children: [
-			{
-				path: "/assembly/guide",
-				title: "引导页"
-			},
-			{
-				path: "/assembly/svgIcon",
-				title: "SVG 图标"
-			},
-			{
-				path: "/assembly/selectIcon",
-				title: "Icon 选择"
-			},
-			{
-				path: "/assembly/batchImport",
-				title: "批量导入数据"
-			}
-		]
-	},
-	{
-		path: "/menu",
-		title: "嵌套菜单",
-		icon: "MenuOutlined",
-		children: [
-			{
-				path: "/menu/menu1",
-				title: "菜单1"
-			},
-			{
-				path: "/menu/menu2",
-				title: "菜单2",
-				children: [
-					{
-						path: "/menu/menu2/menu21",
-						title: "菜单2-1"
-					},
-					{
-						path: "/menu/menu2/menu22",
-						title: "菜单2-2",
-						children: [
-							{
-								path: "/menu/menu2/menu22/menu221",
-								title: "菜单2-2-1"
-							},
-							{
-								path: "/menu/menu2/menu22/menu222",
-								title: "菜单2-2-2"
-							}
-						]
-					},
-					{
-						path: "/menu/menu2/menu23",
-						title: "菜单2-3"
-					}
-				]
-			},
-			{
-				path: "/menu/menu3",
-				title: "菜单3"
-			}
-		]
-	},
-	{
-		path: "/proTable",
-		title: "超级表格",
-		icon: "TableOutlined",
-		children: [
-			{
-				path: "/proTable/useHooks",
-				title: "使用 Hooks"
-			},
-			{
-				path: "/proTable/useComponent",
-				title: "使用 Component"
-			}
-		]
-	},
-	{
-		path: "/link",
-		title: "外部链接",
-		icon: "LinkOutlined",
-		children: [
-			{
-				path: "/link/gitee",
-				title: "Gitee 仓库"
-			},
-			{
-				path: "/link/github",
-				title: "GitHub 仓库"
-			},
-			{
-				path: "/link/juejin",
-				title: "掘金文档"
-			},
-			{
-				path: "/link/myBlog",
-				title: "个人博客"
-			}
-		]
-	}
+	...AUTH_MENU_LIST
 ];
 
+/** 创建符合登录接口约定的成功响应。 */
 const createSuccessResponse = <T>(data: T, msg = "success"): Promise<ResultData<T>> =>
 	Promise.resolve({
 		code: String(ResultEnum.SUCCESS),
@@ -213,13 +46,16 @@ const createSuccessResponse = <T>(data: T, msg = "success"): Promise<ResultData<
 		data
 	});
 
+/** 创建符合登录接口约定的失败响应。 */
 const createErrorResponse = (msg: string) =>
 	Promise.reject({
 		code: String(ResultEnum.ERROR),
 		msg
 	});
 
+/** 从本地存储读取并校验模拟用户列表。 */
 const readMockUsers = (): MockUser[] => {
+	// 读取本地存储中的模拟用户原始数据。
 	const localUsers = localGet(MOCK_USERS_STORAGE_KEY);
 	if (!Array.isArray(localUsers) || !localUsers.length) {
 		localSet(MOCK_USERS_STORAGE_KEY, DEFAULT_USERS);
@@ -228,17 +64,20 @@ const readMockUsers = (): MockUser[] => {
 	return localUsers;
 };
 
+/** 将模拟用户列表写入本地存储。 */
 const writeMockUsers = (users: MockUser[]) => {
 	localSet(MOCK_USERS_STORAGE_KEY, users);
 };
 
+/** 为本地模拟用户生成访问令牌。 */
 const createMockToken = (username: string) => `${MOCK_TOKEN_PREFIX}${username}`;
 
-export const isMockToken = (token?: string) => Boolean(token?.startsWith(MOCK_TOKEN_PREFIX));
-
+/** 校验本地模拟用户并生成访问令牌。 */
 export const loginWithMockUser = async (params: Login.ReqLoginForm): Promise<ResultData<Login.ResLogin>> => {
+	// 读取当前可用于认证或注册校验的模拟用户列表。
 	const users = readMockUsers();
-	const currentUser = users.find(user => user.username === params.username);
+	// 保存与登录凭据匹配的模拟用户。
+	const currentUser = users.find(/* 判断当前集合项是否为目标数据。 */ user => user.username === params.username);
 	if (!currentUser || currentUser.password !== params.password) {
 		return createErrorResponse("用户名或密码错误");
 	}
@@ -250,10 +89,16 @@ export const loginWithMockUser = async (params: Login.ReqLoginForm): Promise<Res
 	);
 };
 
+/** 校验并写入新的本地模拟用户。 */
 export const registerMockUser = async (params: Login.ReqRegisterForm): Promise<ResultData<{ username: string }>> => {
+	// 读取当前可用于认证或注册校验的模拟用户列表。
 	const users = readMockUsers();
-	const duplicatedUser = users.find(user => user.username === params.username || user.phone === params.phone);
+	// 查找手机号或用户名重复的模拟用户。
+	const duplicatedUser = users.find(
+		/* 判断当前集合项是否为目标数据。 */ user => user.username === params.username || user.phone === params.phone
+	);
 	if (duplicatedUser) {
+		// 记录模拟用户注册时发生冲突的字段。
 		const duplicateField = duplicatedUser.username === params.username ? "用户名" : "手机号";
 		return createErrorResponse(`${duplicateField}已存在，请直接登录`);
 	}
@@ -268,10 +113,12 @@ export const registerMockUser = async (params: Login.ReqRegisterForm): Promise<R
 	return createSuccessResponse({ username: params.username }, "注册成功");
 };
 
+/** 生成本地开发环境使用的按钮权限映射。 */
 export const getMockAuthButtons = async (): Promise<ResultData<Login.ResAuthButtons>> => {
 	return createSuccessResponse(FALLBACK_AUTH_BUTTONS);
 };
 
+/** 生成本地开发环境使用的菜单树。 */
 export const getMockMenuList = async (): Promise<ResultData<Menu.MenuOptions[]>> => {
 	return createSuccessResponse(FALLBACK_MENU_LIST);
 };

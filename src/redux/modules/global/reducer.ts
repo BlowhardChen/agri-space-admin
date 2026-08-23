@@ -3,6 +3,7 @@ import { GlobalState } from "@/redux/interface";
 import produce from "immer";
 import * as types from "@/redux/mutation-types";
 
+/** 定义全局配置 Redux 模块的初始状态。 */
 const globalState: GlobalState = {
 	token: "",
 	userInfo: "",
@@ -27,23 +28,30 @@ const globalState: GlobalState = {
 
 // global reducer
 const global = (state: GlobalState = globalState, action: AnyAction) =>
-	produce(state, draftState => {
-		switch (action.type) {
-			case types.SET_TOKEN:
-				draftState.token = action.token;
-				break;
-			case types.SET_ASSEMBLY_SIZE:
-				draftState.assemblySize = action.assemblySize;
-				break;
-			case types.SET_LANGUAGE:
-				draftState.language = action.language;
-				break;
-			case types.SET_THEME_CONFIG:
-				draftState.themeConfig = action.themeConfig;
-				break;
-			default:
-				return draftState;
+	produce(
+		state,
+		/* 基于 Immer 草稿生成不可变 Redux 状态。 */ draftState => {
+			switch (action.type) {
+				case types.SET_TOKEN:
+					draftState.token = action.token;
+					break;
+				case types.RESET_SESSION:
+					draftState.token = "";
+					draftState.userInfo = "";
+					break;
+				case types.SET_ASSEMBLY_SIZE:
+					draftState.assemblySize = action.assemblySize;
+					break;
+				case types.SET_LANGUAGE:
+					draftState.language = action.language;
+					break;
+				case types.SET_THEME_CONFIG:
+					draftState.themeConfig = action.themeConfig;
+					break;
+				default:
+					return draftState;
+			}
 		}
-	});
+	);
 
 export default global;

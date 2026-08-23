@@ -1,8 +1,6 @@
+/** 配置 Less 样式文件使用的 Stylelint 语法和规则。 */
 module.exports = {
-	extends: [
-		"stylelint-config-standard",
-		"stylelint-config-prettier"
-	],
+	extends: ["stylelint-config-standard", "stylelint-config-prettier"],
 	customSyntax: "postcss-less",
 	rules: {
 		"no-invalid-double-slash-comments": null,
@@ -16,6 +14,7 @@ module.exports = {
 		"block-no-empty": null,
 		"color-no-invalid-hex": true,
 		"font-family-no-duplicate-names": true,
+		"function-no-unknown": [true, { ignoreFunctions: ["fade", "lighten", "darken"] }],
 		"function-calc-no-unspaced-operator": true,
 		"function-linear-gradient-no-nonstandard-direction": true,
 		"string-no-newline": true,
