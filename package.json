@@ -22,6 +22,7 @@
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.8.3",
+		"@turf/turf": "^6.5.0",
 		"antd": "^4.22.2",
 		"axios": "^0.27.2",
 		"driver.js": "^0.9.8",
@@ -32,6 +33,7 @@
 		"js-md5": "^0.7.3",
 		"moment": "^2.29.3",
 		"nprogress": "^0.2.0",
+		"ol": "^8.2.0",
 		"qs": "^6.10.5",
 		"react": "^18.2.0",
 		"react-activation": "^0.11.2",
