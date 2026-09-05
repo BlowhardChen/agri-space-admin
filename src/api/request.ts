@@ -43,9 +43,15 @@ class RequestHttp {
 				delete headers.noLoading;
 				if (config.showFullScreenLoading) showFullScreenLoading();
 
-				// 读取当前访问令牌。
+				// 读取当前访问令牌，并按当前后端协议设置认证头。
 				const token = store.getState().global.token;
-				if (token) headers["x-access-token"] = token;
+				if (token) {
+					if (import.meta.env.VITE_USE_MOCK_AUTH === "false") {
+						headers.Authorization = `Bearer ${token}`;
+					} else {
+						headers["x-access-token"] = token;
+					}
+				}
 
 				return { ...config, headers };
 			},

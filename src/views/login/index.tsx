@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import LoginForm, { type LoginPanelMode } from "./components/LoginForm";
 import LoginShowcase from "./components";
 import SwitchDark from "@/components/SwitchDark";
+import { isMockAuthEnabled } from "@/api/modules/login";
 import "./index.less";
 
 interface LoginProps {
@@ -92,16 +93,18 @@ const Login = ({ themeConfig }: LoginProps) => {
 							/>
 						</div>
 
-						<div className="login-signup">
-							<span>{isRegisterMode ? "已经有账号？" : "还没有账号？"}</span>
-							<button
-								type="button"
-								onMouseDown={/* 阻止按钮按下时触发表单默认行为。 */ event => event.preventDefault()}
-								onClick={/* 切换登录与注册面板。 */ () => setPanelMode(isRegisterMode ? "login" : "register")}
-							>
-								{isRegisterMode ? "返回登录" : "立即注册"}
-							</button>
-						</div>
+						{isMockAuthEnabled && (
+							<div className="login-signup">
+								<span>{isRegisterMode ? "已经有账号？" : "还没有账号？"}</span>
+								<button
+									type="button"
+									onMouseDown={/* 阻止按钮按下时触发表单默认行为。 */ event => event.preventDefault()}
+									onClick={/* 切换登录与注册面板。 */ () => setPanelMode(isRegisterMode ? "login" : "register")}
+								>
+									{isRegisterMode ? "返回登录" : "立即注册"}
+								</button>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

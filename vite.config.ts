@@ -41,10 +41,11 @@ export default defineConfig(
 				open: viteEnv.VITE_OPEN,
 				cors: true,
 				// https: false,
-				// 代理跨域（mock 不需要配置，这里只是个事列）
+				// 将开发环境请求代理到地约正式服，避免浏览器跨域限制。
 				proxy: {
 					"/api": {
-						target: "https://mock.mengxuegu.com/mock/62abda3212c1416424630a45", // easymock
+						// 允许部署环境通过变量覆盖正式服地址。
+						target: env.VITE_API_PROXY_TARGET || "http://admin.xtnf.com/web",
 						changeOrigin: true,
 						rewrite: /* 转发请求前移除统一的 /api 前缀。 */ (path: string) => path.replace(/^\/api/, "")
 					}

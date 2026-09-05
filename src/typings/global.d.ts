@@ -23,6 +23,9 @@ declare interface ViteEnv {
 	VITE_BUILD_GZIP: boolean;
 	VITE_REPORT: boolean;
 	VITE_USE_MOCK_AUTH: boolean;
+	VITE_USE_MOCK_LAND: boolean;
+	VITE_API_PROXY_TARGET: string;
+	VITE_MAP_SATELLITE_URL: string;
 }
 
 // * Dropdown MenuInfo

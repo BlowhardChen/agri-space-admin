@@ -12,7 +12,7 @@ import {
 } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { Login } from "@/api/interface";
-import { loginApi, registerApi } from "@/api/modules/login";
+import { isMockAuthEnabled, loginApi, registerApi } from "@/api/modules/login";
 import { HOME_URL } from "@/config/config";
 import { resetSession, setToken } from "@/redux/modules/global/action";
 
@@ -50,6 +50,15 @@ interface LoginFormProps {
 }
 
 type LoginFormValues = PasswordLoginForm & CaptchaLoginForm & RegisterFormValues;
+
+/** 描述 Ant Design 密码框在运行时支持的可控显隐配置。 */
+interface VisibilityToggleConfig {
+	visible: boolean;
+	onVisibleChange: (visible: boolean) => void;
+}
+
+/** 兼容当前锁定的 Ant Design 类型声明与运行时可控显隐 API 的差异。 */
+const createVisibilityToggle = (config: VisibilityToggleConfig) => config as unknown as boolean;
 
 /** 定义验证码再次发送前的倒计时秒数。 */
 const CAPTCHA_SECONDS = 60;
@@ -145,8 +154,8 @@ const LoginForm = (props: LoginFormProps) => {
 			password: loginForm.password
 		};
 		// 读取接口响应中的业务数据。
-		const { data } = await loginApi(payload);
-		completeLogin(data?.access_token);
+		const response = await loginApi(payload);
+		completeLogin(response.data?.access_token || response.data?.token || response.token);
 	};
 
 	/** 校验演示验证码并完成登录。 */
@@ -156,11 +165,11 @@ const LoginForm = (props: LoginFormProps) => {
 			return;
 		}
 		// 读取接口响应中的业务数据。
-		const { data } = await loginApi({
+		const response = await loginApi({
 			username: DEMO_CAPTCHA_LOGIN.username,
 			password: DEMO_CAPTCHA_LOGIN.password
 		});
-		completeLogin(data?.access_token);
+		completeLogin(response.data?.access_token || response.data?.token || response.token);
 	};
 
 	/** 提交注册信息并切换回密码登录。 */
@@ -194,7 +203,7 @@ const LoginForm = (props: LoginFormProps) => {
 			}
 			if (loginMode === "password") {
 				await handlePasswordLogin(values);
-			} else {
+			} else if (isMockAuthEnabled) {
 				await handleCaptchaLogin(values);
 			}
 		} catch (error: any) {
@@ -264,13 +273,13 @@ const LoginForm = (props: LoginFormProps) => {
 									autoComplete="current-password"
 									placeholder="请输入密码"
 									prefix={<LockOutlined />}
-									visibilityToggle={{
+									visibilityToggle={createVisibilityToggle({
 										visible: passwordVisible,
-										onVisibleChange: /* 同步密码可见状态并通知展示区动画。 */ visible => {
+										onVisibleChange: /* 同步密码可见状态并通知展示区动画。 */ (visible: boolean) => {
 											setPasswordVisible(visible);
 											onPasswordVisibilityChange?.(visible);
 										}
-									}}
+									})}
 									iconRender={
 										/* 根据密码可见状态渲染对应图标。 */ visible =>
 											visible ? <EyeTwoTone twoToneColor="#379446" /> : <EyeInvisibleOutlined />
@@ -339,14 +348,16 @@ const LoginForm = (props: LoginFormProps) => {
 						<Button type="primary" htmlType="submit" loading={loading}>
 							{loginMode === "password" ? "登录" : "验证码登录"}
 						</Button>
-						<Button
-							htmlType="button"
-							icon={loginMode === "password" ? <MailOutlined /> : <LockOutlined />}
-							onMouseDown={/* 阻止按钮按下时触发表单默认行为。 */ event => event.preventDefault()}
-							onClick={switchMode}
-						>
-							{loginMode === "password" ? "使用验证码登录" : "使用密码登录"}
-						</Button>
+						{isMockAuthEnabled && (
+							<Button
+								htmlType="button"
+								icon={loginMode === "password" ? <MailOutlined /> : <LockOutlined />}
+								onMouseDown={/* 阻止按钮按下时触发表单默认行为。 */ event => event.preventDefault()}
+								onClick={switchMode}
+							>
+								{loginMode === "password" ? "使用验证码登录" : "使用密码登录"}
+							</Button>
+						)}
 					</Form.Item>
 				</>
 			) : (
@@ -376,13 +387,13 @@ const LoginForm = (props: LoginFormProps) => {
 							autoComplete="new-password"
 							placeholder="请设置登录密码"
 							prefix={<LockOutlined />}
-							visibilityToggle={{
+							visibilityToggle={createVisibilityToggle({
 								visible: registerPasswordVisible,
-								onVisibleChange: /* 同步注册密码可见状态并通知展示区动画。 */ visible => {
+								onVisibleChange: /* 同步注册密码可见状态并通知展示区动画。 */ (visible: boolean) => {
 									setRegisterPasswordVisible(visible);
 									onPasswordVisibilityChange?.(visible);
 								}
-							}}
+							})}
 							iconRender={
 								/* 根据注册密码可见状态渲染对应图标。 */ visible =>
 									visible ? <EyeTwoTone twoToneColor="#379446" /> : <EyeInvisibleOutlined />
@@ -414,13 +425,13 @@ const LoginForm = (props: LoginFormProps) => {
 							autoComplete="new-password"
 							placeholder="请再次输入密码"
 							prefix={<SafetyCertificateOutlined />}
-							visibilityToggle={{
+							visibilityToggle={createVisibilityToggle({
 								visible: confirmPasswordVisible,
-								onVisibleChange: /* 同步确认密码可见状态并通知展示区动画。 */ visible => {
+								onVisibleChange: /* 同步确认密码可见状态并通知展示区动画。 */ (visible: boolean) => {
 									setConfirmPasswordVisible(visible);
 									onPasswordVisibilityChange?.(visible);
 								}
-							}}
+							})}
 							iconRender={
 								/* 根据确认密码可见状态渲染对应图标。 */ visible =>
 									visible ? <EyeTwoTone twoToneColor="#379446" /> : <EyeInvisibleOutlined />
