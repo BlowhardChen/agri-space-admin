@@ -96,6 +96,13 @@ const setPrimaryColorVariables = (primaryColor?: string) => {
 		"--agri-primary-border-color",
 		isDefaultPrimary ? DEFAULT_AGRI_BORDER_COLOR : mixColor(color, "#ffffff", 0.2)
 	);
+	// 同步 Ant Design 4 变量别名，供现有页面样式和组件内部变量共同使用。
+	root.style.setProperty("--ant-primary-color", color);
+	root.style.setProperty("--ant-primary-color-hover", hoverColor);
+	root.style.setProperty("--ant-primary-color-active", activeColor);
+	root.style.setProperty("--ant-primary-color-outline", `rgb(${r} ${g} ${b} / 20%)`);
+	root.style.setProperty("--ant-primary-1", `rgb(${r} ${g} ${b} / 8%)`);
+	root.style.setProperty("--ant-primary-2", `rgb(${r} ${g} ${b} / 16%)`);
 };
 
 /** 创建或复用动态主题色样式节点。 */
@@ -119,7 +126,27 @@ const setDynamicPrimaryStyle = () => {
 
 	styleElement.textContent = `
 		a,
-		.ant-btn-link,
+		.ant-btn-link:not(.ant-btn-dangerous),
+		.ant-btn-default:not(.ant-btn-dangerous):not([disabled]):hover,
+		.ant-btn-default:not(.ant-btn-dangerous):not([disabled]):focus,
+		.ant-btn-dashed:not(.ant-btn-dangerous):not([disabled]):hover,
+		.ant-btn-dashed:not(.ant-btn-dangerous):not([disabled]):focus,
+		.ant-radio-button-wrapper:not(.ant-radio-button-wrapper-disabled):hover,
+		.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled),
+		.ant-pagination-item-active a,
+		.ant-pagination-item:hover a,
+		.ant-pagination-prev:hover .ant-pagination-item-link,
+		.ant-pagination-next:hover .ant-pagination-item-link,
+		.ant-picker-header button:hover,
+		.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner,
+		.ant-picker-today-btn,
+		.ant-select-item-option-selected:not(.ant-select-item-option-disabled) .ant-select-item-option-state,
+		.ant-dropdown-menu-item-selected,
+		.ant-dropdown-menu-submenu-title-selected,
+		.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected,
+		.ant-tree .ant-tree-node-content-wrapper:hover,
+		.ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon,
+		.ant-anchor-link-active > .ant-anchor-link-title,
 		.ant-tabs-tab:hover,
 		.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn,
 		.ant-menu-light .ant-menu-item:hover,
@@ -138,9 +165,28 @@ const setDynamicPrimaryStyle = () => {
 			color: var(--agri-primary) !important;
 		}
 
-		.ant-btn-primary,
+		.ant-btn-primary:not(.ant-btn-dangerous),
+		.ant-btn-default:not(.ant-btn-dangerous):not([disabled]):hover,
+		.ant-btn-default:not(.ant-btn-dangerous):not([disabled]):focus,
+		.ant-btn-dashed:not(.ant-btn-dangerous):not([disabled]):hover,
+		.ant-btn-dashed:not(.ant-btn-dangerous):not([disabled]):focus,
 		.ant-switch-checked,
 		.ant-checkbox-checked .ant-checkbox-inner,
+		.ant-checkbox-indeterminate .ant-checkbox-inner,
+		.ant-radio-checked .ant-radio-inner,
+		.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled),
+		.ant-pagination-item:hover,
+		.ant-pagination-prev:hover .ant-pagination-item-link,
+		.ant-pagination-next:hover .ant-pagination-item-link,
+		.ant-input-number:hover,
+		.ant-input-number-focused,
+		.ant-slider-handle,
+		.ant-slider:hover .ant-slider-handle:not(.ant-tooltip-open),
+		.ant-upload.ant-upload-select-picture-card:hover,
+		.ant-upload.ant-upload-drag:not(.ant-upload-disabled):hover,
+		.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before,
+		.ant-steps-item-process .ant-steps-item-icon,
+		.ant-timeline-item-head-blue,
 		.ant-radio-inner::after,
 		.ant-pagination-item-active,
 		.ant-tabs-ink-bar,
@@ -154,11 +200,23 @@ const setDynamicPrimaryStyle = () => {
 			border-color: var(--agri-primary) !important;
 		}
 
-		.ant-btn-primary,
+		.ant-btn-primary:not(.ant-btn-dangerous):not(.ant-btn-background-ghost),
 		.ant-spin-dot-item,
 		.ant-switch-checked,
 		.ant-checkbox-checked .ant-checkbox-inner,
+		.ant-checkbox-indeterminate .ant-checkbox-inner::after,
 		.ant-radio-inner::after,
+		.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled),
+		.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,
+		.ant-picker-cell-in-view.ant-picker-cell-range-start .ant-picker-cell-inner,
+		.ant-picker-cell-in-view.ant-picker-cell-range-end .ant-picker-cell-inner,
+		.ant-slider-track,
+		.ant-slider:hover .ant-slider-track,
+		.ant-progress-bg,
+		.ant-steps-item-process .ant-steps-item-icon,
+		.ant-badge-status-processing,
+		.ant-pagination-item-active,
+		.ant-anchor-ink-ball,
 		.ant-tabs-ink-bar,
 		.ant-menu-dark .ant-menu-item-selected,
 		.ant-menu-dark .ant-menu-submenu-selected,
@@ -168,6 +226,25 @@ const setDynamicPrimaryStyle = () => {
 
 		.ant-menu-light .ant-menu-item-selected {
 			background-color: var(--agri-primary-soft-color) !important;
+		}
+
+		.ant-select-item-option-selected:not(.ant-select-item-option-disabled),
+		.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected,
+		.ant-picker-cell-in-view.ant-picker-cell-in-range::before,
+		.ant-picker-cell-in-view.ant-picker-cell-range-start:not(.ant-picker-cell-range-start-single)::before,
+		.ant-picker-cell-in-view.ant-picker-cell-range-end:not(.ant-picker-cell-range-end-single)::before {
+			background-color: var(--agri-primary-soft-color) !important;
+		}
+
+		.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+			color: #fff !important;
+		}
+
+		.ant-pagination-item-active a,
+		.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,
+		.ant-picker-cell-in-view.ant-picker-cell-range-start .ant-picker-cell-inner,
+		.ant-picker-cell-in-view.ant-picker-cell-range-end .ant-picker-cell-inner {
+			color: #fff !important;
 		}
 
 		.ant-menu-inline .ant-menu-item::after,
@@ -183,14 +260,15 @@ const setDynamicPrimaryStyle = () => {
 			border-color: var(--agri-primary) !important;
 		}
 
-		.ant-btn-primary:hover,
-		.ant-btn-primary:focus,
-		.ant-switch-checked:hover {
+		.ant-btn-primary:not(.ant-btn-dangerous):not(.ant-btn-background-ghost):hover,
+		.ant-btn-primary:not(.ant-btn-dangerous):not(.ant-btn-background-ghost):focus,
+		.ant-switch-checked:hover,
+		.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover {
 			border-color: var(--agri-primary-hover) !important;
 			background-color: var(--agri-primary-hover) !important;
 		}
 
-		.ant-btn-primary:active {
+		.ant-btn-primary:not(.ant-btn-dangerous):not(.ant-btn-background-ghost):active {
 			border-color: var(--agri-primary-active) !important;
 			background-color: var(--agri-primary-active) !important;
 		}
@@ -206,6 +284,8 @@ const setDynamicPrimaryStyle = () => {
 		.ant-input-focused,
 		.ant-input-affix-wrapper:hover,
 		.ant-input-affix-wrapper-focused,
+		.ant-input-number:hover,
+		.ant-input-number-focused,
 		.ant-select:not(.ant-select-disabled):hover .ant-select-selector,
 		.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector,
 		.ant-picker:hover,
@@ -216,9 +296,29 @@ const setDynamicPrimaryStyle = () => {
 		.ant-input:focus,
 		.ant-input-focused,
 		.ant-input-affix-wrapper-focused,
+		.ant-input-number-focused,
 		.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector,
 		.ant-picker-focused {
 			box-shadow: 0 0 0 2px var(--agri-primary-soft-color) !important;
+		}
+
+		.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before,
+		.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover::before,
+		.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after,
+		.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title::after {
+			background-color: var(--agri-primary) !important;
+		}
+
+		.ant-btn-background-ghost.ant-btn-primary:not(.ant-btn-dangerous),
+		.ant-btn-background-ghost.ant-btn-primary:not(.ant-btn-dangerous):hover,
+		.ant-btn-background-ghost.ant-btn-primary:not(.ant-btn-dangerous):focus {
+			color: var(--agri-primary) !important;
+			background-color: transparent !important;
+			border-color: var(--agri-primary) !important;
+		}
+
+		.ant-badge-status-processing::after {
+			border-color: var(--agri-primary) !important;
 		}
 	`;
 };
