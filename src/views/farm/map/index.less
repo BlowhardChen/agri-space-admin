@@ -1,0 +1,739 @@
+.farm-map-page {
+	position: relative;
+	display: flex;
+	height: 100%;
+	min-height: 650px;
+	overflow: hidden;
+	background: #fff;
+	border-radius: 4px;
+	box-shadow: 0 1px 4px rgb(0 0 0 / 8%);
+
+	&.is-collapsed {
+		.farm-sidebar {
+			width: 0;
+			opacity: 0;
+		}
+
+		.farm-sidebar-collapse {
+			left: 0;
+		}
+	}
+}
+
+.farm-sidebar {
+	position: relative;
+	z-index: 3;
+	display: flex;
+	width: 400px;
+	min-width: 0;
+	flex: 0 0 auto;
+	flex-direction: column;
+	overflow: hidden;
+	background: #fff;
+	transition: width 0.22s, opacity 0.18s;
+}
+
+.farm-sidebar-search {
+	display: flex;
+	gap: 7px;
+	padding: 18px 14px 10px;
+
+	.ant-input-search {
+		min-width: 180px;
+		flex: 1;
+	}
+
+	.ant-btn {
+		flex: 0 0 auto;
+	}
+}
+
+.farm-area-summary {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	padding: 5px 10px 12px;
+
+	div {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		gap: 3px;
+		border-right: 1px solid #f0f0f0;
+
+		&:last-child {
+			border-right: 0;
+		}
+	}
+
+	strong {
+		font-size: 20px;
+		font-weight: 600;
+		color: var(--agri-primary);
+	}
+
+	span {
+		font-size: 13px;
+		color: rgb(0 0 0 / 65%);
+	}
+}
+
+.farm-sidebar > .ant-tabs {
+	.ant-tabs-nav {
+		margin-bottom: 6px;
+		padding: 0 12px;
+	}
+
+	.ant-tabs-tab {
+		padding: 8px 0;
+	}
+}
+
+.farm-task-list {
+	min-height: 0;
+	flex: 1;
+	padding: 2px 8px 12px;
+	overflow-y: auto;
+
+	> .ant-spin-nested-loading,
+	.ant-spin-container {
+		min-height: 100%;
+	}
+}
+
+.farm-task-card {
+	margin-bottom: 8px;
+	overflow: hidden;
+	cursor: pointer;
+	background: #fff;
+	border: 1px solid #edf0f2;
+	border-radius: 5px;
+	box-shadow: 0 2px 7px rgb(0 0 0 / 5%);
+	transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+
+	&.is-active {
+		background: var(--agri-primary-soft-color);
+		border-color: var(--agri-primary);
+		box-shadow: 0 0 0 2px var(--agri-primary-soft-color);
+	}
+
+	> .ant-progress {
+		display: block;
+		width: auto;
+		margin: 0 12px 9px;
+	}
+}
+
+.farm-task-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 11px 10px 3px 13px;
+
+	> div:first-child {
+		display: flex;
+		min-width: 0;
+		align-items: center;
+		gap: 7px;
+	}
+
+	strong {
+		overflow: hidden;
+		font-size: 15px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+.farm-task-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding: 2px 13px 8px;
+	font-size: 12px;
+	color: rgb(0 0 0 / 60%);
+}
+
+.farm-task-count {
+	display: flex;
+	height: 32px;
+	align-items: center;
+	justify-content: space-around;
+	margin: 0 11px 4px;
+	font-size: 12px;
+	background: rgb(0 0 0 / 3%);
+	border-radius: 3px;
+
+	em {
+		font-style: normal;
+		color: #fa8c16;
+	}
+
+	i {
+		width: 1px;
+		height: 12px;
+		background: rgb(0 0 0 / 10%);
+	}
+}
+
+.farm-task-lands {
+	background: #fafcf9;
+	border-top: 1px solid #edf0ea;
+
+	> button {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		gap: 9px;
+		padding: 9px 10px 9px 14px;
+		text-align: left;
+		cursor: pointer;
+		background: transparent;
+		border: 0;
+		border-bottom: 1px solid #f0f0f0;
+
+		&.is-active,
+		&:hover {
+			background: var(--agri-primary-soft-color);
+		}
+
+		> div {
+			display: flex;
+			min-width: 0;
+			flex: 1;
+			flex-direction: column;
+			gap: 2px;
+		}
+
+		strong,
+		span {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		strong {
+			font-size: 13px;
+			font-weight: 600;
+		}
+
+		span {
+			font-size: 11px;
+			color: rgb(0 0 0 / 50%);
+		}
+
+		.farm-detail-link {
+			font-size: 12px;
+			color: var(--agri-primary);
+			white-space: nowrap;
+		}
+	}
+}
+
+.farm-land-dot {
+	width: 12px;
+	height: 12px;
+	flex: 0 0 auto;
+	border: 2px solid;
+	border-radius: 3px;
+
+	&.is-type-1 {
+		background: rgb(0 185 107 / 25%);
+		border-color: #00b96b;
+	}
+
+	&.is-type-2 {
+		background: rgb(19 194 194 / 25%);
+		border-color: #13c2c2;
+	}
+}
+
+.farm-task-actions {
+	display: flex;
+	width: 130px;
+	flex-direction: column;
+
+	button {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 7px 10px;
+		text-align: left;
+		cursor: pointer;
+		background: transparent;
+		border: 0;
+		border-radius: 3px;
+
+		&:hover {
+			color: var(--agri-primary);
+			background: var(--agri-primary-soft-color);
+		}
+	}
+}
+
+.farm-sidebar-collapse {
+	position: absolute;
+	top: 50%;
+	left: 400px;
+	z-index: 12;
+	width: 26px;
+	height: 50px;
+	padding: 0;
+	border-radius: 0 5px 5px 0;
+	transform: translateY(-50%);
+	transition: left 0.22s;
+}
+
+.farm-map-main {
+	min-width: 0;
+	flex: 1;
+}
+
+.farm-map-shell {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	min-height: 650px;
+	overflow: hidden;
+	background: #10211b;
+}
+
+.farm-map-canvas {
+	width: 100%;
+	height: 100%;
+}
+
+.farm-map-legend {
+	position: absolute;
+	bottom: 34px;
+	left: 18px;
+	z-index: 5;
+	display: grid;
+	grid-template-columns: repeat(2, auto);
+	gap: 5px 15px;
+	padding: 9px 12px;
+	color: #fff;
+	background: rgb(4 24 20 / 74%);
+	border-radius: 4px;
+
+	span {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		font-size: 12px;
+	}
+
+	i {
+		display: inline-block;
+		width: 13px;
+		height: 13px;
+		border: 2px solid;
+		border-radius: 3px;
+
+		&.is-transfer {
+			background: rgb(0 185 107 / 45%);
+			border-color: #00b96b;
+		}
+
+		&.is-managed {
+			background: rgb(19 194 194 / 45%);
+			border-color: #13c2c2;
+		}
+
+		&.is-actual-line,
+		&.is-planned-line {
+			height: 3px;
+			border: 0;
+			border-radius: 0;
+		}
+
+		&.is-actual-line {
+			background: #fa8c16;
+		}
+
+		&.is-planned-line {
+			background: repeating-linear-gradient(90deg, #1677ff 0 5px, transparent 5px 8px);
+		}
+	}
+}
+
+.farm-map-controls {
+	position: absolute;
+	right: 16px;
+	bottom: 65px;
+	z-index: 5;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	> .ant-btn,
+	.farm-map-zoom-stack .ant-btn {
+		display: flex;
+		width: 42px;
+		height: 40px;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		font-size: 18px;
+		background: rgb(255 255 255 / 96%);
+		border: 0;
+		box-shadow: 0 3px 10px rgb(0 0 0 / 18%);
+	}
+
+	.ant-btn.is-active {
+		color: #fff;
+		background: var(--agri-primary);
+	}
+}
+
+.farm-map-layer-control {
+	position: relative;
+}
+
+.farm-map-layer-picker {
+	position: absolute;
+	right: 50px;
+	bottom: 0;
+	display: flex;
+	gap: 12px;
+	padding: 12px;
+	background: rgb(255 255 255 / 96%);
+	border-radius: 5px;
+	box-shadow: 0 3px 12px rgb(0 0 0 / 18%);
+
+	button {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		align-items: center;
+		font-size: 12px;
+		cursor: pointer;
+		background: none;
+		border: 0;
+
+		&.is-active {
+			font-weight: 600;
+			color: var(--agri-primary);
+		}
+	}
+
+	i {
+		display: block;
+		width: 62px;
+		height: 44px;
+		border: 2px solid transparent;
+		border-radius: 3px;
+
+		&.is-standard {
+			background: linear-gradient(30deg, transparent 48%, #fff 49%, #fff 51%, transparent 52%), #bdd6c8;
+		}
+
+		&.is-satellite {
+			background: linear-gradient(135deg, rgb(255 255 255 / 12%) 25%, transparent 25%) 0 0 / 12px 12px, #31583d;
+		}
+	}
+
+	.is-active i {
+		border-color: var(--agri-primary);
+	}
+}
+
+.farm-map-zoom-stack {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background: #fff;
+	border-radius: 4px;
+	box-shadow: 0 3px 10px rgb(0 0 0 / 18%);
+
+	span {
+		display: flex;
+		height: 34px;
+		align-items: center;
+		justify-content: center;
+		border-top: 1px solid #eee;
+		border-bottom: 1px solid #eee;
+	}
+}
+
+.farm-map-shell .ol-scale-line {
+	bottom: 10px;
+	left: 18px;
+	background: rgb(255 255 255 / 85%);
+}
+
+.farm-land-selection-tools {
+	position: absolute;
+	top: 16px;
+	right: 426px;
+	z-index: 20;
+	display: flex;
+	overflow: hidden;
+	background: rgb(255 255 255 / 97%);
+	border-radius: 6px;
+	box-shadow: 0 3px 12px rgb(0 0 0 / 22%);
+
+	button {
+		display: flex;
+		height: 42px;
+		align-items: center;
+		gap: 6px;
+		padding: 0 14px;
+		cursor: pointer;
+		background: transparent;
+		border: 0;
+		border-right: 1px solid #f0f0f0;
+
+		&:last-child {
+			border-right: 0;
+		}
+
+		&.is-active,
+		&:hover:not(:disabled) {
+			color: var(--agri-primary);
+			background: var(--agri-primary-soft-color);
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.45;
+		}
+	}
+}
+
+.farm-detail {
+	.ant-descriptions {
+		margin-top: 20px;
+	}
+}
+
+.farm-detail-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	> div {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	strong {
+		font-size: 17px;
+	}
+}
+
+.farm-form-section-title {
+	margin-bottom: 14px;
+	padding-left: 9px;
+	font-size: 16px;
+	font-weight: 600;
+	border-left: 4px solid var(--agri-primary);
+
+	&.is-team {
+		margin-top: 22px;
+	}
+}
+
+.farm-land-select-trigger {
+	display: flex;
+	width: 100%;
+	height: 38px;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 11px;
+	color: rgb(0 0 0 / 45%);
+	text-align: left;
+	cursor: pointer;
+	background: #fff;
+	border: 1px solid #d9d9d9;
+	border-radius: 2px;
+
+	strong {
+		color: var(--agri-primary);
+	}
+
+	&:hover {
+		border-color: var(--agri-primary);
+	}
+}
+
+.farm-form-error {
+	margin-top: 3px;
+	font-size: 12px;
+	color: #ff4d4f;
+}
+
+.farm-filter-range-label {
+	margin-bottom: 7px;
+	color: rgb(0 0 0 / 85%);
+}
+
+.farm-filter-range {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 20px;
+
+	.ant-input-number {
+		min-width: 0;
+		flex: 1;
+	}
+}
+
+.farm-land-selector {
+	.ant-drawer-body {
+		display: flex;
+		flex-direction: column;
+		padding: 0;
+		overflow: hidden;
+	}
+
+	.ant-tabs-nav {
+		margin-bottom: 12px;
+	}
+}
+
+.farm-land-type-tabs {
+	display: flex;
+	padding: 0 16px 12px;
+
+	.ant-radio-button-wrapper {
+		flex: 1;
+		text-align: center;
+	}
+}
+
+.farm-assign-account {
+	padding: 0 16px 14px;
+
+	label {
+		display: block;
+		margin-bottom: 6px;
+	}
+}
+
+.farm-selector-land-list {
+	height: calc(100vh - 255px);
+	overflow-y: auto;
+}
+
+.farm-selector-land {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 13px;
+	text-align: left;
+	cursor: pointer;
+	background: #fff;
+	border: 0;
+	border-bottom: 1px solid #f0f0f0;
+
+	&.is-selected,
+	&:hover {
+		background: var(--agri-primary-soft-color);
+	}
+
+	> .ant-tag {
+		margin-right: 0;
+	}
+}
+
+.farm-land-thumbnail {
+	display: flex;
+	width: 56px;
+	height: 58px;
+	flex: 0 0 56px;
+	align-items: flex-end;
+	justify-content: center;
+	background: linear-gradient(135deg, #cde1cc, #edf5e8);
+	border: 1px solid #b8cab5;
+	border-radius: 4px;
+
+	span {
+		width: 100%;
+		padding: 2px 0;
+		font-size: 11px;
+		color: #fff;
+		text-align: center;
+		background: rgb(0 0 0 / 48%);
+	}
+
+	&.is-type-2 {
+		background: linear-gradient(135deg, #cae6e4, #e9f7f7);
+	}
+}
+
+.farm-selector-land-info {
+	display: flex;
+	min-width: 0;
+	flex: 1;
+	flex-direction: column;
+	gap: 2px;
+
+	strong,
+	span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	strong {
+		font-size: 13px;
+	}
+
+	span {
+		font-size: 11px;
+		color: rgb(0 0 0 / 55%);
+	}
+
+	em {
+		font-style: normal;
+		color: var(--agri-primary);
+	}
+}
+
+.farm-land-selector-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 12px;
+
+	strong {
+		color: var(--agri-primary);
+	}
+
+	span {
+		color: rgb(0 0 0 / 55%);
+	}
+
+	button {
+		margin-left: 8px;
+		padding: 5px 14px;
+		cursor: pointer;
+		background: #fff;
+		border: 1px solid #d9d9d9;
+		border-radius: 2px;
+
+		&.is-primary {
+			color: #fff;
+			background: var(--agri-primary);
+			border-color: var(--agri-primary);
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.5;
+		}
+	}
+}
+
+@media (max-width: 1200px) {
+	.farm-sidebar {
+		width: 370px;
+	}
+
+	.farm-sidebar-collapse {
+		left: 370px;
+	}
+}
