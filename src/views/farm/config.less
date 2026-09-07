@@ -1,0 +1,100 @@
+.farm-config-page {
+	display: flex;
+	min-height: 100%;
+
+	.ant-radio-button-wrapper {
+		min-width: 74px;
+		text-align: center;
+	}
+}
+
+.farm-field-options {
+	display: flex;
+	flex-direction: column;
+	max-height: 300px;
+	overflow-y: auto;
+	gap: 8px;
+}
+
+.farm-field-option-row {
+	display: flex;
+	width: 100%;
+
+	.ant-space-item:first-child {
+		flex: 1;
+	}
+
+	.ant-form-item {
+		margin-bottom: 0;
+	}
+
+	.ant-btn {
+		margin-top: 30px;
+	}
+}
+
+.farm-config-editor-label {
+	margin-bottom: 8px;
+	font-weight: 500;
+
+	&::before {
+		display: inline-block;
+		margin-right: 4px;
+		color: #ff4d4f;
+		content: "*";
+	}
+}
+
+.farm-config-field-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.farm-scheme-section-title {
+	margin: 18px 0 12px;
+	padding-left: 9px;
+	font-size: 16px;
+	font-weight: 600;
+	border-left: 4px solid var(--agri-primary);
+}
+
+.farm-scheme-type-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.farm-scheme-type-button {
+	position: relative;
+	min-width: 116px;
+}
+
+.farm-scheme-type-card {
+	margin-top: 14px;
+
+	.ant-card-head {
+		min-height: 42px;
+	}
+
+	.ant-card-head-title,
+	.ant-card-body {
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+}
+
+.farm-scheme-empty {
+	padding: 28px 0;
+	color: rgb(0 0 0 / 45%);
+	text-align: center;
+	background: #fafafa;
+	border: 1px dashed #d9d9d9;
+}
+
+.farm-scheme-editor {
+	.ant-modal-body {
+		max-height: calc(100vh - 240px);
+		overflow-y: auto;
+	}
+}
